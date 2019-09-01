@@ -1,0 +1,3371 @@
+{
+  "class": GETDNS_RRCLASS_IN,
+  "name": <bindata for some.domain.tld.>,
+  "rdata":
+  {
+    "rdata_raw": <bindata of 0x0c666972737420737472696e67067365...>,
+    "txt_strings":
+    [
+       <bindata of "first string">,
+       <bindata of "second">,
+       <bindata of "and third">,
+       <bindata of "last string">
+    ]
+  },
+  "ttl": 60,
+  "type": GETDNS_RRTYPE_TXT
+}
+0000  04 73 6f 6d 65 06 64 6f  6d 61 69 6e 03 74 6c 64  .some.do main.tld
+0010  00 00 10 00 01 00 00 00  3c 00 1e 0c 66 69 72 73  ........ <...firs
+0020  74 20 73 74 72 69 6e 67  06 73 65 63 6f 6e 64 09  t string .second.
+0030  61 6e 64 20 74 68 69 72  64                       and thir d.......
+
+removed "/rdata/rdata_raw":
+
+0000  04 73 6f 6d 65 06 64 6f  6d 61 69 6e 03 74 6c 64  .some.do main.tld
+0010  00 00 10 00 01 00 00 00  3c 00 2a 0c 66 69 72 73  ........ <.*.firs
+0020  74 20 73 74 72 69 6e 67  06 73 65 63 6f 6e 64 09  t string .second.
+0030  61 6e 64 20 74 68 69 72  64 0b 6c 61 73 74 20 73  and thir d.last s
+0040  74 72 69 6e 67                                    tring... ........
+
+some.domain.tld.	60	IN	TXT	"first string" "last string"
+some.domain.tld.	60	IN	TXT	\# 0
+
+www.getdnsapi.net.	0	IN	A	185.49.141.37
+
+0000  03 77 77 77 09 67 65 74  64 6e 73 61 70 69 03 6e  .www.get dnsapi.n
+0010  65 74 00 00 01 00 01 00  00 00 00 00 04 b9 31 8d  et...... ......1.
+0020  25                                                %....... ........
+
+{
+  "class": GETDNS_RRCLASS_IN,
+  "name": <bindata for hip2.nlnetlabs.nl.>,
+  "rdata":
+  {
+    "hit": <bindata of 0x200100107b1a74df365639cc39f1d578>,
+    "pk_algorithm": 2,
+    "public_key": <bindata of 0x03010001b771ca136e4aeb5ce44333c5...>,
+    "rendezvous_servers":
+    [
+       <bindata for rvs1.example.com.>,
+       <bindata for rvs2.example.com.>
+    ]
+  },
+  "ttl": 3600,
+  "type": GETDNS_RRTYPE_HIP
+}
+hip2.nlnetlabs.nl.	3600	IN	HIP	2 200100107B1A74DF365639CC39F1D578 AwEAAbdxyhNuSutc5EMzxTs9LBPCIkOFH8cIvM4p9+LrV4e19WzK00+CI6zBCQTdtWsuxKbWIy87UOoJTwkUs7lBu+Upr1gsNrut79ryra+bSRGQb1slImA8YVJyuIDsj7kwzG7jnERNqnWxZ48AWkskmdHaVDP4BcelrTI3rMXdXF5D rvs1.example.com. rvs2.example.com.
+hip0.nlnetlabs.nl.	3600	IN	HIP	2 200100107B1A74DF365639CC39F1D578 AwEAAbdxyhNuSutc5EMzxTs9LBPCIkOFH8cIvM4p9+LrV4e19WzK00+CI6zBCQTdtWsuxKbWIy87UOoJTwkUs7lBu+Upr1gsNrut79ryra+bSRGQb1slImA8YVJyuIDsj7kwzG7jnERNqnWxZ48AWkskmdHaVDP4BcelrTI3rMXdXF5D
+
+{
+  "class": GETDNS_RRCLASS_IN,
+  "name": <bindata for apl.net-dns.org.>,
+  "rdata":
+  {
+    "apitems":
+    [
+      {
+        "address_family": 1,
+        "afdpart": <bindata of 0xc0a82a>,
+        "n": 0,
+        "prefix": 26
+      },
+      {
+        "address_family": 1,
+        "afdpart": <bindata of 0xc0a82a40>,
+        "n": 0,
+        "prefix": 26
+      },
+      {
+        "address_family": 1,
+        "afdpart": <bindata of 0xc0a82a80>,
+        "n": 1,
+        "prefix": 25
+      },
+      {
+        "address_family": 1,
+        "afdpart": <bindata of 0xe0>,
+        "n": 0,
+        "prefix": 4
+      },
+      {
+        "address_family": 2,
+        "afdpart": <bindata of 0xff>,
+        "n": 0,
+        "prefix": 8
+      }
+    ]
+  },
+  "ttl": 3600,
+  "type": GETDNS_RRTYPE_APL
+}
+apl.net-dns.org.	3600	IN	APL	1:192.168.42.0/26 1:192.168.42.64/26 !1:192.168.42.128/25 1:224.0.0.0/4 2:ff00:0000:0000:0000:0000:0000:0000:0000/8
+[
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for net-dns.org.>,
+    "rdata":
+    {
+      "expire": 345600,
+      "minimum": 300,
+      "mname": <bindata for ns.nlnetlabs.nl.>,
+      "rdata_raw": <bindata of 0x026e73096e6c6e65746c616273026e6c...>,
+      "refresh": 450,
+      "retry": 600,
+      "rname": <bindata for sysadmin.nlnetlabs.nl.>,
+      "serial": 2015081800
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_SOA
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for net-dns.org.>,
+    "rdata":
+    {
+      "nsdname": <bindata for ns.nlnetlabs.nl.>,
+      "rdata_raw": <bindata for ns.nlnetlabs.nl.>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_NS
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for net-dns.org.>,
+    "rdata":
+    {
+      "nsdname": <bindata for ns.hactrn.net.>,
+      "rdata_raw": <bindata for ns.hactrn.net.>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_NS
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for net-dns.org.>,
+    "rdata":
+    {
+      "nsdname": <bindata for mcvax.nlnet.nl.>,
+      "rdata_raw": <bindata for mcvax.nlnet.nl.>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_NS
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for net-dns.org.>,
+    "rdata":
+    {
+      "nsdname": <bindata for sec2.authdns.ripe.net.>,
+      "rdata_raw": <bindata for sec2.authdns.ripe.net.>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_NS
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for net-dns.org.>,
+    "rdata":
+    {
+      "ipv4_address": <bindata for 185.49.140.22>,
+      "rdata_raw": <bindata of 0xb9318c16>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_A
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for net-dns.org.>,
+    "rdata":
+    {
+      "ipv6_address": <bindata for 2a04:b900::2:0:0:22>,
+      "rdata_raw": <bindata of 0x2a04b900000000000002000000000022>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_AAAA
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for net-dns.org.>,
+    "rdata":
+    {
+      "exchange": <bindata for dicht.nlnetlabs.nl.>,
+      "preference": 10,
+      "rdata_raw": <bindata of 0x000a056469636874096e6c6e65746c61...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_MX
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for net-dns.org.>,
+    "rdata":
+    {
+      "exchange": <bindata for mcvax.nlnet.nl.>,
+      "preference": 20,
+      "rdata_raw": <bindata of 0x0014056d63766178056e6c6e6574026e...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_MX
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x104e65743a3a444e532020646f6d6169...>,
+      "txt_strings":
+      [
+         <bindata of "Net::DNS  domain">
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for _443._tcp.net-dns.org.>,
+    "rdata":
+    {
+      "certificate_association_data": <bindata of 0x274c6f96c9885c8050e8a05ad1c3162c...>,
+      "certificate_usage": 3,
+      "matching_type": 1,
+      "rdata_raw": <bindata of 0x030101274c6f96c9885c8050e8a05ad1...>,
+      "selector": 1
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TLSA
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for _443._tcp.www.net-dns.org.>,
+    "rdata":
+    {
+      "certificate_association_data": <bindata of 0x274c6f96c9885c8050e8a05ad1c3162c...>,
+      "certificate_usage": 3,
+      "matching_type": 1,
+      "rdata_raw": <bindata of 0x030101274c6f96c9885c8050e8a05ad1...>,
+      "selector": 1
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TLSA
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for dynup.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x07666f6f466f6f3209426c61203b2046...>,
+      "txt_strings":
+      [
+         <bindata of "fooFoo2">,
+         <bindata of "Bla ; Foo">
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for lists.net-dns.org.>,
+    "rdata":
+    {
+      "ipv4_address": <bindata for 63.209.15.196>,
+      "rdata_raw": <bindata of 0x3fd10fc4>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_A
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for localhost.net-dns.org.>,
+    "rdata":
+    {
+      "ipv4_address": <bindata for 127.0.0.1>,
+      "rdata_raw": <bindata of 0x7f000001>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_A
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3e416e64206c696e652031206f662061...>,
+      "txt_strings":
+      [
+         <bindata of "And line 1 of al sorts of crap t"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3e416e64206c696e652032206f662061...>,
+      "txt_strings":
+      [
+         <bindata of "And line 2 of al sorts of crap t"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3e416e64206c696e652033206f662061...>,
+      "txt_strings":
+      [
+         <bindata of "And line 3 of al sorts of crap t"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3e416e64206c696e652034206f662061...>,
+      "txt_strings":
+      [
+         <bindata of "And line 4 of al sorts of crap t"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3e416e64206c696e652035206f662061...>,
+      "txt_strings":
+      [
+         <bindata of "And line 5 of al sorts of crap t"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3e416e64206c696e652036206f662061...>,
+      "txt_strings":
+      [
+         <bindata of "And line 6 of al sorts of crap t"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3e416e64206c696e652037206f662061...>,
+      "txt_strings":
+      [
+         <bindata of "And line 7 of al sorts of crap t"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3e416e64206c696e652038206f662061...>,
+      "txt_strings":
+      [
+         <bindata of "And line 8 of al sorts of crap t"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3e416e64206c696e652039206f662061...>,
+      "txt_strings":
+      [
+         <bindata of "And line 9 of al sorts of crap t"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203130206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 10 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203131206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 11 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203132206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 12 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203133206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 13 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203134206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 14 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203135206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 15 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203136206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 16 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203137206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 17 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203138206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 18 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203139206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 19 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203230206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 20 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203231206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 21 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203232206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 22 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203233206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 23 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203235206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 25 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203236206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 26 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203237206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 27 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203238206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 28 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203239206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 29 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203330206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 30 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203331206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 31 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203332206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 32 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203333206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 33 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203334206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 34 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203335206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 35 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203336206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 36 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203337206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 37 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203338206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 38 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203339206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 39 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203430206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 40 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203431206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 41 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203432206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 42 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203433206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 43 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203434206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 44 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203435206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 45 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203436206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 46 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203437206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 47 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203438206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 48 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203439206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 49 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203530206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 50 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203531206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 51 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203532206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 52 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203533206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 53 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203534206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 54 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203535206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 55 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203536206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 56 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203537206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 57 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203538206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 58 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203539206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 59 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3f416e64206c696e65203630206f6620...>,
+      "txt_strings":
+      [
+         <bindata of "And line 60 of al sorts of crap "...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x40416e64206c696e6520323234206f66...>,
+      "txt_strings":
+      [
+         <bindata of "And line 224 of al sorts of crap"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for overflow.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x45416e20696e637265616469626c7920...>,
+      "txt_strings":
+      [
+         <bindata of "An increadibly large answer sect"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for t.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x31546865206e616d6573207769746869...>,
+      "txt_strings":
+      [
+         <bindata of "The names within this domain are"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for a.t.net-dns.org.>,
+    "rdata":
+    {
+      "ipv4_address": <bindata for 10.0.1.128>,
+      "rdata_raw": <bindata of 0x0a000180>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_A
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for a2.t.net-dns.org.>,
+    "rdata":
+    {
+      "ipv4_address": <bindata for 10.0.1.129>,
+      "rdata_raw": <bindata of 0x0a000181>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_A
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for cname.t.net-dns.org.>,
+    "rdata":
+    {
+      "cname": <bindata for a.t.net-dns.org.>,
+      "rdata_raw": <bindata for a.t.net-dns.org.>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_CNAME
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for mx.t.net-dns.org.>,
+    "rdata":
+    {
+      "exchange": <bindata for a.t.net-dns.org.>,
+      "preference": 10,
+      "rdata_raw": <bindata of 0x000a01610174076e65742d646e73036f...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_MX
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for mx2.t.net-dns.org.>,
+    "rdata":
+    {
+      "exchange": <bindata for a.t.net-dns.org.>,
+      "preference": 10,
+      "rdata_raw": <bindata of 0x000a01610174076e65742d646e73036f...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_MX
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for mx2.t.net-dns.org.>,
+    "rdata":
+    {
+      "exchange": <bindata for a2.t.net-dns.org.>,
+      "preference": 15,
+      "rdata_raw": <bindata of 0x000f0261320174076e65742d646e7303...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_MX
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for txt.t.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x074e65742d444e53>,
+      "txt_strings":
+      [
+         <bindata of "Net-DNS">
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for txt2.t.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x1a4e65742d444e533b20636f6d706c69...>,
+      "txt_strings":
+      [
+         <bindata of "Net-DNS; complicated $tuff">,
+         <bindata of 0x736f7274206f66202220746578743b20...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for connection-test.t.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x16636f6e6e656374696f6e2d74657374...>,
+      "txt_strings":
+      [
+         <bindata of "connection-test succes">
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for txt-utf8.t.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x09e58fa4e6b1a0e382840ce89b99e9a3...>,
+      "txt_strings":
+      [
+         <bindata of 0xe58fa4e6b1a0e38284>,
+         <bindata of 0xe89b99e9a39be8bebce38280>,
+         <bindata of 0xe6b0b4e381aee99fb3>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for txt-utf8-bin.t.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x09e58fa4e6b1a0e382840ce89b99e9a3...>,
+      "txt_strings":
+      [
+         <bindata of 0xe58fa4e6b1a0e38284>,
+         <bindata of 0xe89b99e9a39be8bebce38280>,
+         <bindata of 0xe6b0b4e381aee99fb3>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for a.few.empty.non.terminals.t.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x01610366657705656d707479036e6f6e...>,
+      "txt_strings":
+      [
+         <bindata of "a">,
+         <bindata of "few">,
+         <bindata of "empty">,
+         <bindata of "non">,
+         <bindata of "terminals">
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for a.few.empty.non.terminals.t.net-dns.org.>,
+    "rdata":
+    {
+      "ipv4_address": <bindata for 185.49.140.22>,
+      "rdata_raw": <bindata of 0xb9318c16>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_A
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for a.few.empty.non.terminals.t.net-dns.org.>,
+    "rdata":
+    {
+      "ipv6_address": <bindata for 2a04:b900::2:0:0:22>,
+      "rdata_raw": <bindata of 0x2a04b900000000000002000000000022>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_AAAA
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for yx1.cname.t.net-dns.org.>,
+    "rdata":
+    {
+      "cname": <bindata for -.t.net-dns.org.>,
+      "rdata_raw": <bindata for -.t.net-dns.org.>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_CNAME
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for yx2.cname.t.net-dns.org.>,
+    "rdata":
+    {
+      "cname": <bindata for a-a.t.net-dns.org.>,
+      "rdata_raw": <bindata for a-a.t.net-dns.org.>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_CNAME
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for yx3.cname.t.net-dns.org.>,
+    "rdata":
+    {
+      "cname": <bindata for a\..t.net-dns.org.>,
+      "rdata_raw": <bindata for a\..t.net-dns.org.>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_CNAME
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for yx4.cname.t.net-dns.org.>,
+    "rdata":
+    {
+      "cname": <bindata for a\000.t.net-dns.org.>,
+      "rdata_raw": <bindata for a\000.t.net-dns.org.>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_CNAME
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for nx1.cname.t.net-dns.org.>,
+    "rdata":
+    {
+      "cname": <bindata for does.not.exist.t.net-dns.org.>,
+      "rdata_raw": <bindata for does.not.exist.t.net-dns.org.>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_CNAME
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for nx2.cname.t.net-dns.org.>,
+    "rdata":
+    {
+      "cname": <bindata for empty.non.terminals.t.net-dns.org.>,
+      "rdata_raw": <bindata for empty.non.terminals.t.net-dns.org.>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_CNAME
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for www.net-dns.org.>,
+    "rdata":
+    {
+      "ipv4_address": <bindata for 185.49.140.22>,
+      "rdata_raw": <bindata of 0xb9318c16>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_A
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for www.net-dns.org.>,
+    "rdata":
+    {
+      "ipv6_address": <bindata for 2a04:b900::2:0:0:22>,
+      "rdata_raw": <bindata of 0x2a04b900000000000002000000000022>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_AAAA
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for apl.net-dns.org.>,
+    "rdata":
+    {
+      "apitems":
+      [
+        {
+          "address_family": 1,
+          "afdpart": <bindata of 0xc0a82a>,
+          "n": 0,
+          "prefix": 26
+        },
+        {
+          "address_family": 1,
+          "afdpart": <bindata of 0xc0a82a40>,
+          "n": 0,
+          "prefix": 26
+        },
+        {
+          "address_family": 1,
+          "afdpart": <bindata of 0xc0a82a80>,
+          "n": 1,
+          "prefix": 25
+        },
+        {
+          "address_family": 1,
+          "afdpart": <bindata of 0xe0>,
+          "n": 0,
+          "prefix": 4
+        },
+        {
+          "address_family": 2,
+          "afdpart": <bindata of 0xff>,
+          "n": 0,
+          "prefix": 8
+        }
+      ],
+      "rdata_raw": <bindata of 0x00011a03c0a82a00011a04c0a82a4000...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_APL
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for ipseckey0.net-dns.org.>,
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway_type": 0,
+      "precedence": 2,
+      "public_key": <bindata of 0x010351537986ed35533b6064478eeeb2...>,
+      "rdata_raw": <bindata of 0x0a0002010351537986ed35533b606447...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_IPSECKEY
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for ipseckey1.net-dns.org.>,
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway": <bindata of 0xc0000226>,
+      "gateway_type": 1,
+      "precedence": 2,
+      "public_key": <bindata of 0x010351537986ed35533b6064478eeeb2...>,
+      "rdata_raw": <bindata of 0x0a0102c0000226010351537986ed3553...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_IPSECKEY
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for ipseckey2.net-dns.org.>,
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway": <bindata of 0x20010db8000080020000000020000001>,
+      "gateway_type": 2,
+      "precedence": 2,
+      "public_key": <bindata of 0x010351537986ed35533b6064478eeeb2...>,
+      "rdata_raw": <bindata of 0x0a020220010db8000080020000000020...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_IPSECKEY
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for ipseckey3.net-dns.org.>,
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway": <bindata for mygateway.example.com.>,
+      "gateway_type": 3,
+      "precedence": 2,
+      "public_key": <bindata of 0x010351537986ed35533b6064478eeeb2...>,
+      "rdata_raw": <bindata of 0x0a0302096d7967617465776179076578...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_IPSECKEY
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for ipseckey.net-dns.org.>,
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway_type": 0,
+      "precedence": 2,
+      "public_key": <bindata of 0x010351537986ed35533b6064478eeeb2...>,
+      "rdata_raw": <bindata of 0x0a0002010351537986ed35533b606447...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_IPSECKEY
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for ipseckey.net-dns.org.>,
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway": <bindata of 0xc0000226>,
+      "gateway_type": 1,
+      "precedence": 2,
+      "public_key": <bindata of 0x010351537986ed35533b6064478eeeb2...>,
+      "rdata_raw": <bindata of 0x0a0102c0000226010351537986ed3553...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_IPSECKEY
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for ipseckey.net-dns.org.>,
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway": <bindata of 0x20010db8000080020000000020000001>,
+      "gateway_type": 2,
+      "precedence": 2,
+      "public_key": <bindata of 0x010351537986ed35533b6064478eeeb2...>,
+      "rdata_raw": <bindata of 0x0a020220010db8000080020000000020...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_IPSECKEY
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for ipseckey.net-dns.org.>,
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway": <bindata for mygateway.example.com.>,
+      "gateway_type": 3,
+      "precedence": 2,
+      "public_key": <bindata of 0x010351537986ed35533b6064478eeeb2...>,
+      "rdata_raw": <bindata of 0x0a0302096d7967617465776179076578...>
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_IPSECKEY
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for default._domainkey.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0xfd763d444b494d313b20723d706f7374...>,
+      "txt_strings":
+      [
+         <bindata of "v=DKIM1; r=postmaster; g=*; k=rs"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for 2.3.3.updates.spamassassin.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x083134313832313920>,
+      "txt_strings":
+      [
+         <bindata of "1418219 ">
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  },
+  {
+    "class": GETDNS_RRCLASS_IN,
+    "name": <bindata for mirrors.updates.spamassassin.net-dns.org.>,
+    "rdata":
+    {
+      "rdata_raw": <bindata of 0x3c687474703a2f2f616e6f6e796d6f75...>,
+      "txt_strings":
+      [
+         <bindata of "http://anonymous@spamassassin.ap"...>
+      ]
+    },
+    "ttl": 30,
+    "type": GETDNS_RRTYPE_TXT
+  }
+]
+[
+  {
+    "class": 1,
+    "name":"net-dns.org.",
+    "rdata":
+    {
+      "expire": 345600,
+      "minimum": 300,
+      "mname":"ns.nlnetlabs.nl.",
+      "rdata_raw":[2,110,115,9,110,108,110,101,116,108,97,98,115,2,110,108,0,8,115,121,115,97,100,109,105,110,9,110,108,110,101,116,108,97,98,115,2,110,108,0,120,27,181,72,0,0,1,194,0,0,2,88,0,5,70,0,0,0,1,44],
+      "refresh": 450,
+      "retry": 600,
+      "rname":"sysadmin.nlnetlabs.nl.",
+      "serial": 2015081800
+    },
+    "ttl": 30,
+    "type": 6
+  },
+  {
+    "class": 1,
+    "name":"net-dns.org.",
+    "rdata":
+    {
+      "nsdname":"ns.nlnetlabs.nl.",
+      "rdata_raw":"ns.nlnetlabs.nl."
+    },
+    "ttl": 30,
+    "type": 2
+  },
+  {
+    "class": 1,
+    "name":"net-dns.org.",
+    "rdata":
+    {
+      "nsdname":"ns.hactrn.net.",
+      "rdata_raw":"ns.hactrn.net."
+    },
+    "ttl": 30,
+    "type": 2
+  },
+  {
+    "class": 1,
+    "name":"net-dns.org.",
+    "rdata":
+    {
+      "nsdname":"mcvax.nlnet.nl.",
+      "rdata_raw":"mcvax.nlnet.nl."
+    },
+    "ttl": 30,
+    "type": 2
+  },
+  {
+    "class": 1,
+    "name":"net-dns.org.",
+    "rdata":
+    {
+      "nsdname":"sec2.authdns.ripe.net.",
+      "rdata_raw":"sec2.authdns.ripe.net."
+    },
+    "ttl": 30,
+    "type": 2
+  },
+  {
+    "class": 1,
+    "name":"net-dns.org.",
+    "rdata":
+    {
+      "ipv4_address":"185.49.140.22",
+      "rdata_raw":[185,49,140,22]
+    },
+    "ttl": 30,
+    "type": 1
+  },
+  {
+    "class": 1,
+    "name":"net-dns.org.",
+    "rdata":
+    {
+      "ipv6_address":"2a04:b900::2:0:0:22",
+      "rdata_raw":[42,4,185,0,0,0,0,0,0,2,0,0,0,0,0,34]
+    },
+    "ttl": 30,
+    "type": 28
+  },
+  {
+    "class": 1,
+    "name":"net-dns.org.",
+    "rdata":
+    {
+      "exchange":"dicht.nlnetlabs.nl.",
+      "preference": 10,
+      "rdata_raw":[0,10,5,100,105,99,104,116,9,110,108,110,101,116,108,97,98,115,2,110,108,0]
+    },
+    "ttl": 30,
+    "type": 15
+  },
+  {
+    "class": 1,
+    "name":"net-dns.org.",
+    "rdata":
+    {
+      "exchange":"mcvax.nlnet.nl.",
+      "preference": 20,
+      "rdata_raw":[0,20,5,109,99,118,97,120,5,110,108,110,101,116,2,110,108,0]
+    },
+    "ttl": 30,
+    "type": 15
+  },
+  {
+    "class": 1,
+    "name":"net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[16,78,101,116,58,58,68,78,83,32,32,100,111,109,97,105,110],
+      "txt_strings":
+      [
+        "Net::DNS  domain"
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"_443._tcp.net-dns.org.",
+    "rdata":
+    {
+      "certificate_association_data":[39,76,111,150,201,136,92,128,80,232,160,90,209,195,22,44,29,81,117,44,53,182,25,100,116,227,240,90,211,28,217,35],
+      "certificate_usage": 3,
+      "matching_type": 1,
+      "rdata_raw":[3,1,1,39,76,111,150,201,136,92,128,80,232,160,90,209,195,22,44,29,81,117,44,53,182,25,100,116,227,240,90,211,28,217,35],
+      "selector": 1
+    },
+    "ttl": 30,
+    "type": 52
+  },
+  {
+    "class": 1,
+    "name":"_443._tcp.www.net-dns.org.",
+    "rdata":
+    {
+      "certificate_association_data":[39,76,111,150,201,136,92,128,80,232,160,90,209,195,22,44,29,81,117,44,53,182,25,100,116,227,240,90,211,28,217,35],
+      "certificate_usage": 3,
+      "matching_type": 1,
+      "rdata_raw":[3,1,1,39,76,111,150,201,136,92,128,80,232,160,90,209,195,22,44,29,81,117,44,53,182,25,100,116,227,240,90,211,28,217,35],
+      "selector": 1
+    },
+    "ttl": 30,
+    "type": 52
+  },
+  {
+    "class": 1,
+    "name":"dynup.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[7,102,111,111,70,111,111,50,9,66,108,97,32,59,32,70,111,111],
+      "txt_strings":
+      [
+        "fooFoo2",
+        "Bla ; Foo"
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"lists.net-dns.org.",
+    "rdata":
+    {
+      "ipv4_address":"63.209.15.196",
+      "rdata_raw":[63,209,15,196]
+    },
+    "ttl": 30,
+    "type": 1
+  },
+  {
+    "class": 1,
+    "name":"localhost.net-dns.org.",
+    "rdata":
+    {
+      "ipv4_address":"127.0.0.1",
+      "rdata_raw":[127,0,0,1]
+    },
+    "ttl": 30,
+    "type": 1
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[62,65,110,100,32,108,105,110,101,32,49,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 1 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[62,65,110,100,32,108,105,110,101,32,50,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 2 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[62,65,110,100,32,108,105,110,101,32,51,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 3 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[62,65,110,100,32,108,105,110,101,32,52,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 4 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[62,65,110,100,32,108,105,110,101,32,53,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 5 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[62,65,110,100,32,108,105,110,101,32,54,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 6 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[62,65,110,100,32,108,105,110,101,32,55,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 7 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[62,65,110,100,32,108,105,110,101,32,56,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 8 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[62,65,110,100,32,108,105,110,101,32,57,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 9 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,49,48,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 10 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,49,49,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 11 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,49,50,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 12 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,49,51,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 13 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,49,52,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 14 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,49,53,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 15 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,49,54,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 16 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,49,55,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 17 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,49,56,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 18 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,49,57,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 19 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,50,48,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 20 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,50,49,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 21 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,50,50,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 22 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,50,51,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 23 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,50,53,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 25 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,50,54,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 26 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,50,55,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 27 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,50,56,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 28 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,50,57,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 29 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,51,48,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 30 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,51,49,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 31 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,51,50,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 32 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,51,51,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 33 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,51,52,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 34 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,51,53,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 35 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,51,54,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 36 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,51,55,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 37 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,51,56,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 38 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,51,57,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 39 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,52,48,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 40 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,52,49,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 41 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,52,50,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 42 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,52,51,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 43 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,52,52,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 44 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,52,53,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 45 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,52,54,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 46 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,52,55,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 47 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,52,56,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 48 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,52,57,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 49 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,53,48,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 50 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,53,49,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 51 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,53,50,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 52 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,53,51,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 53 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,53,52,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 54 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,53,53,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 55 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,53,54,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 56 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,53,55,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 57 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,53,56,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 58 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,53,57,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 59 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[63,65,110,100,32,108,105,110,101,32,54,48,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 60 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[64,65,110,100,32,108,105,110,101,32,50,50,52,32,111,102,32,97,108,32,115,111,114,116,115,32,111,102,32,99,114,97,112,32,116,104,97,116,32,119,105,108,108,32,106,117,115,116,32,102,105,108,108,32,116,104,101,32,112,97,99,107,101,116,32],
+      "txt_strings":
+      [
+        "And line 224 of al sorts of crap that will just fill the packet "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"overflow.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[69,65,110,32,105,110,99,114,101,97,100,105,98,108,121,32,108,97,114,103,101,32,97,110,115,119,101,114,32,115,101,99,116,105,111,110,32,116,104,97,116,32,119,105,108,108,32,108,101,97,100,32,116,111,32,112,97,99,107,101,116,32,111,118,101,114,102,108,111,119],
+      "txt_strings":
+      [
+        "An increadibly large answer section that will lead to packet overflow"
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"t.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[49,84,104,101,32,110,97,109,101,115,32,119,105,116,104,105,110,32,116,104,105,115,32,100,111,109,97,105,110,32,97,114,101,32,117,115,101,100,32,102,111,114,32,116,101,115,116,105,110,103],
+      "txt_strings":
+      [
+        "The names within this domain are used for testing"
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"a.t.net-dns.org.",
+    "rdata":
+    {
+      "ipv4_address":"10.0.1.128",
+      "rdata_raw":[10,0,1,128]
+    },
+    "ttl": 30,
+    "type": 1
+  },
+  {
+    "class": 1,
+    "name":"a2.t.net-dns.org.",
+    "rdata":
+    {
+      "ipv4_address":"10.0.1.129",
+      "rdata_raw":[10,0,1,129]
+    },
+    "ttl": 30,
+    "type": 1
+  },
+  {
+    "class": 1,
+    "name":"cname.t.net-dns.org.",
+    "rdata":
+    {
+      "cname":"a.t.net-dns.org.",
+      "rdata_raw":"a.t.net-dns.org."
+    },
+    "ttl": 30,
+    "type": 5
+  },
+  {
+    "class": 1,
+    "name":"mx.t.net-dns.org.",
+    "rdata":
+    {
+      "exchange":"a.t.net-dns.org.",
+      "preference": 10,
+      "rdata_raw":[0,10,1,97,1,116,7,110,101,116,45,100,110,115,3,111,114,103,0]
+    },
+    "ttl": 30,
+    "type": 15
+  },
+  {
+    "class": 1,
+    "name":"mx2.t.net-dns.org.",
+    "rdata":
+    {
+      "exchange":"a.t.net-dns.org.",
+      "preference": 10,
+      "rdata_raw":[0,10,1,97,1,116,7,110,101,116,45,100,110,115,3,111,114,103,0]
+    },
+    "ttl": 30,
+    "type": 15
+  },
+  {
+    "class": 1,
+    "name":"mx2.t.net-dns.org.",
+    "rdata":
+    {
+      "exchange":"a2.t.net-dns.org.",
+      "preference": 15,
+      "rdata_raw":[0,15,2,97,50,1,116,7,110,101,116,45,100,110,115,3,111,114,103,0]
+    },
+    "ttl": 30,
+    "type": 15
+  },
+  {
+    "class": 1,
+    "name":"txt.t.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[7,78,101,116,45,68,78,83],
+      "txt_strings":
+      [
+        "Net-DNS"
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"txt2.t.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[26,78,101,116,45,68,78,83,59,32,99,111,109,112,108,105,99,97,116,101,100,32,36,116,117,102,102,33,115,111,114,116,32,111,102,32,34,32,116,101,120,116,59,32,97,110,100,32,98,105,110,97,114,121,32,0,32,100,97,116,97],
+      "txt_strings":
+      [
+        "Net-DNS; complicated $tuff",
+        [115,111,114,116,32,111,102,32,34,32,116,101,120,116,59,32,97,110,100,32,98,105,110,97,114,121,32,0,32,100,97,116,97]
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"connection-test.t.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[22,99,111,110,110,101,99,116,105,111,110,45,116,101,115,116,32,115,117,99,99,101,115],
+      "txt_strings":
+      [
+        "connection-test succes"
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"txt-utf8.t.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[9,229,143,164,230,177,160,227,130,132,12,232,155,153,233,163,155,232,190,188,227,130,128,9,230,176,180,227,129,174,233,159,179],
+      "txt_strings":
+      [
+        [229,143,164,230,177,160,227,130,132],
+        [232,155,153,233,163,155,232,190,188,227,130,128],
+        [230,176,180,227,129,174,233,159,179]
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"txt-utf8-bin.t.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[9,229,143,164,230,177,160,227,130,132,12,232,155,153,233,163,155,232,190,188,227,130,128,9,230,176,180,227,129,174,233,159,179],
+      "txt_strings":
+      [
+        [229,143,164,230,177,160,227,130,132],
+        [232,155,153,233,163,155,232,190,188,227,130,128],
+        [230,176,180,227,129,174,233,159,179]
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"a.few.empty.non.terminals.t.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[1,97,3,102,101,119,5,101,109,112,116,121,3,110,111,110,9,116,101,114,109,105,110,97,108,115],
+      "txt_strings":
+      [
+        "a",
+        "few",
+        "empty",
+        "non",
+        "terminals"
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"a.few.empty.non.terminals.t.net-dns.org.",
+    "rdata":
+    {
+      "ipv4_address":"185.49.140.22",
+      "rdata_raw":[185,49,140,22]
+    },
+    "ttl": 30,
+    "type": 1
+  },
+  {
+    "class": 1,
+    "name":"a.few.empty.non.terminals.t.net-dns.org.",
+    "rdata":
+    {
+      "ipv6_address":"2a04:b900::2:0:0:22",
+      "rdata_raw":[42,4,185,0,0,0,0,0,0,2,0,0,0,0,0,34]
+    },
+    "ttl": 30,
+    "type": 28
+  },
+  {
+    "class": 1,
+    "name":"yx1.cname.t.net-dns.org.",
+    "rdata":
+    {
+      "cname":"-.t.net-dns.org.",
+      "rdata_raw":"-.t.net-dns.org."
+    },
+    "ttl": 30,
+    "type": 5
+  },
+  {
+    "class": 1,
+    "name":"yx2.cname.t.net-dns.org.",
+    "rdata":
+    {
+      "cname":"a-a.t.net-dns.org.",
+      "rdata_raw":"a-a.t.net-dns.org."
+    },
+    "ttl": 30,
+    "type": 5
+  },
+  {
+    "class": 1,
+    "name":"yx3.cname.t.net-dns.org.",
+    "rdata":
+    {
+      "cname":"a\..t.net-dns.org.",
+      "rdata_raw":"a\..t.net-dns.org."
+    },
+    "ttl": 30,
+    "type": 5
+  },
+  {
+    "class": 1,
+    "name":"yx4.cname.t.net-dns.org.",
+    "rdata":
+    {
+      "cname":"a\000.t.net-dns.org.",
+      "rdata_raw":"a\000.t.net-dns.org."
+    },
+    "ttl": 30,
+    "type": 5
+  },
+  {
+    "class": 1,
+    "name":"nx1.cname.t.net-dns.org.",
+    "rdata":
+    {
+      "cname":"does.not.exist.t.net-dns.org.",
+      "rdata_raw":"does.not.exist.t.net-dns.org."
+    },
+    "ttl": 30,
+    "type": 5
+  },
+  {
+    "class": 1,
+    "name":"nx2.cname.t.net-dns.org.",
+    "rdata":
+    {
+      "cname":"empty.non.terminals.t.net-dns.org.",
+      "rdata_raw":"empty.non.terminals.t.net-dns.org."
+    },
+    "ttl": 30,
+    "type": 5
+  },
+  {
+    "class": 1,
+    "name":"www.net-dns.org.",
+    "rdata":
+    {
+      "ipv4_address":"185.49.140.22",
+      "rdata_raw":[185,49,140,22]
+    },
+    "ttl": 30,
+    "type": 1
+  },
+  {
+    "class": 1,
+    "name":"www.net-dns.org.",
+    "rdata":
+    {
+      "ipv6_address":"2a04:b900::2:0:0:22",
+      "rdata_raw":[42,4,185,0,0,0,0,0,0,2,0,0,0,0,0,34]
+    },
+    "ttl": 30,
+    "type": 28
+  },
+  {
+    "class": 1,
+    "name":"apl.net-dns.org.",
+    "rdata":
+    {
+      "apitems":
+      [
+        {
+          "address_family": 1,
+          "afdpart":[192,168,42],
+          "n": 0,
+          "prefix": 26
+        },
+        {
+          "address_family": 1,
+          "afdpart":[192,168,42,64],
+          "n": 0,
+          "prefix": 26
+        },
+        {
+          "address_family": 1,
+          "afdpart":[192,168,42,128],
+          "n": 1,
+          "prefix": 25
+        },
+        {
+          "address_family": 1,
+          "afdpart":[224],
+          "n": 0,
+          "prefix": 4
+        },
+        {
+          "address_family": 2,
+          "afdpart":[255],
+          "n": 0,
+          "prefix": 8
+        }
+      ],
+      "rdata_raw":[0,1,26,3,192,168,42,0,1,26,4,192,168,42,64,0,1,25,132,192,168,42,128,0,1,4,1,224,0,2,8,1,255]
+    },
+    "ttl": 30,
+    "type": 42
+  },
+  {
+    "class": 1,
+    "name":"ipseckey0.net-dns.org.",
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway_type": 0,
+      "precedence": 2,
+      "public_key":[1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1],
+      "rdata_raw":[10,0,2,1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1]
+    },
+    "ttl": 30,
+    "type": 45
+  },
+  {
+    "class": 1,
+    "name":"ipseckey1.net-dns.org.",
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway":[192,0,2,38],
+      "gateway_type": 1,
+      "precedence": 2,
+      "public_key":[1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1],
+      "rdata_raw":[10,1,2,192,0,2,38,1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1]
+    },
+    "ttl": 30,
+    "type": 45
+  },
+  {
+    "class": 1,
+    "name":"ipseckey2.net-dns.org.",
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway":[32,1,13,184,0,0,128,2,0,0,0,0,32,0,0,1],
+      "gateway_type": 2,
+      "precedence": 2,
+      "public_key":[1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1],
+      "rdata_raw":[10,2,2,32,1,13,184,0,0,128,2,0,0,0,0,32,0,0,1,1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1]
+    },
+    "ttl": 30,
+    "type": 45
+  },
+  {
+    "class": 1,
+    "name":"ipseckey3.net-dns.org.",
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway":"mygateway.example.com.",
+      "gateway_type": 3,
+      "precedence": 2,
+      "public_key":[1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1],
+      "rdata_raw":[10,3,2,9,109,121,103,97,116,101,119,97,121,7,101,120,97,109,112,108,101,3,99,111,109,0,1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1]
+    },
+    "ttl": 30,
+    "type": 45
+  },
+  {
+    "class": 1,
+    "name":"ipseckey.net-dns.org.",
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway_type": 0,
+      "precedence": 2,
+      "public_key":[1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1],
+      "rdata_raw":[10,0,2,1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1]
+    },
+    "ttl": 30,
+    "type": 45
+  },
+  {
+    "class": 1,
+    "name":"ipseckey.net-dns.org.",
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway":[192,0,2,38],
+      "gateway_type": 1,
+      "precedence": 2,
+      "public_key":[1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1],
+      "rdata_raw":[10,1,2,192,0,2,38,1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1]
+    },
+    "ttl": 30,
+    "type": 45
+  },
+  {
+    "class": 1,
+    "name":"ipseckey.net-dns.org.",
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway":[32,1,13,184,0,0,128,2,0,0,0,0,32,0,0,1],
+      "gateway_type": 2,
+      "precedence": 2,
+      "public_key":[1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1],
+      "rdata_raw":[10,2,2,32,1,13,184,0,0,128,2,0,0,0,0,32,0,0,1,1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1]
+    },
+    "ttl": 30,
+    "type": 45
+  },
+  {
+    "class": 1,
+    "name":"ipseckey.net-dns.org.",
+    "rdata":
+    {
+      "algorithm": 10,
+      "gateway":"mygateway.example.com.",
+      "gateway_type": 3,
+      "precedence": 2,
+      "public_key":[1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1],
+      "rdata_raw":[10,3,2,9,109,121,103,97,116,101,119,97,121,7,101,120,97,109,112,108,101,3,99,111,109,0,1,3,81,83,121,134,237,53,83,59,96,100,71,142,238,178,123,91,215,77,174,20,155,110,129,186,58,5,33,175,130,171,120,1]
+    },
+    "ttl": 30,
+    "type": 45
+  },
+  {
+    "class": 1,
+    "name":"default._domainkey.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[253,118,61,68,75,73,77,49,59,32,114,61,112,111,115,116,109,97,115,116,101,114,59,32,103,61,42,59,32,107,61,114,115,97,59,32,112,61,77,73,71,102,77,65,48,71,67,83,113,71,83,73,98,51,68,81,69,66,65,81,85,65,65,52,71,78,65,68,67,66,105,81,75,66,103,81,68,86,71,47,108,102,70,53,71,116,80,108,77,79,99,83,71,110,102,98,112,53,117,43,69,87,77,43,79,79,103,47,102,54,81,109,98,68,88,79,87,47,122,75,81,107,82,73,82,73,90,43,66,116,102,83,89,99,104,80,56,77,101,70,80,102,77,118,85,90,116,100,82,80,122,67,87,103,49,71,55,79,100,68,55,113,97,84,85,113,99,54,107,86,56,52,111,110,54,47,56,107,80,86,77,103,100,68,76,121,76,108,50,68,101,85,47,76,116,115,57,104,102,86,72,86,68,83,112,87,117,67,104,119,68,65,70,88,110,98,110,87,56,106,112,112,53,52,122,117,111,102,57,79,73,98,87,83,87,73,120,90,113,76,76,56,102,108,103,79,115,81,73,68,65,81,65,66],
+      "txt_strings":
+      [
+        "v=DKIM1; r=postmaster; g=*; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDVG/lfF5GtPlMOcSGnfbp5u+EWM+OOg/f6QmbDXOW/zKQkRIRIZ+BtfSYchP8MeFPfMvUZtdRPzCWg1G7OdD7qaTUqc6kV84on6/8kPVMgdDLyLl2DeU/Lts9hfVHVDSpWuChwDAFXnbnW8jpp54zuof9OIbWSWIxZqLL8flgOsQIDAQAB"
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"2.3.3.updates.spamassassin.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[8,49,52,49,56,50,49,57,32],
+      "txt_strings":
+      [
+        "1418219 "
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  },
+  {
+    "class": 1,
+    "name":"mirrors.updates.spamassassin.net-dns.org.",
+    "rdata":
+    {
+      "rdata_raw":[60,104,116,116,112,58,47,47,97,110,111,110,121,109,111,117,115,64,115,112,97,109,97,115,115,97,115,115,105,110,46,97,112,97,99,104,101,46,111,114,103,47,117,112,100,97,116,101,115,47,77,73,82,82,79,82,69,68,46,66,89],
+      "txt_strings":
+      [
+        "http://anonymous@spamassassin.apache.org/updates/MIRRORED.BY"
+      ]
+    },
+    "ttl": 30,
+    "type": 16
+  }
+]
+record   0, available buffer space: 8117
+record   1, available buffer space: 8077
+record   2, available buffer space: 8039
+record   3, available buffer space: 8000
+record   4, available buffer space: 7954
+record   5, available buffer space: 7927
+record   6, available buffer space: 7888
+record   7, available buffer space: 7843
+record   8, available buffer space: 7802
+record   9, available buffer space: 7762
+record  10, available buffer space: 7694
+record  11, available buffer space: 7622
+record  12, available buffer space: 7575
+record  13, available buffer space: 7542
+record  14, available buffer space: 7505
+record  15, available buffer space: 7410
+record  16, available buffer space: 7315
+record  17, available buffer space: 7220
+record  18, available buffer space: 7125
+record  19, available buffer space: 7030
+record  20, available buffer space: 6935
+record  21, available buffer space: 6840
+record  22, available buffer space: 6745
+record  23, available buffer space: 6650
+record  24, available buffer space: 6554
+record  25, available buffer space: 6458
+record  26, available buffer space: 6362
+record  27, available buffer space: 6266
+record  28, available buffer space: 6170
+record  29, available buffer space: 6074
+record  30, available buffer space: 5978
+record  31, available buffer space: 5882
+record  32, available buffer space: 5786
+record  33, available buffer space: 5690
+record  34, available buffer space: 5594
+record  35, available buffer space: 5498
+record  36, available buffer space: 5402
+record  37, available buffer space: 5306
+record  38, available buffer space: 5210
+record  39, available buffer space: 5114
+record  40, available buffer space: 5018
+record  41, available buffer space: 4922
+record  42, available buffer space: 4826
+record  43, available buffer space: 4730
+record  44, available buffer space: 4634
+record  45, available buffer space: 4538
+record  46, available buffer space: 4442
+record  47, available buffer space: 4346
+record  48, available buffer space: 4250
+record  49, available buffer space: 4154
+record  50, available buffer space: 4058
+record  51, available buffer space: 3962
+record  52, available buffer space: 3866
+record  53, available buffer space: 3770
+record  54, available buffer space: 3674
+record  55, available buffer space: 3578
+record  56, available buffer space: 3482
+record  57, available buffer space: 3386
+record  58, available buffer space: 3290
+record  59, available buffer space: 3194
+record  60, available buffer space: 3098
+record  61, available buffer space: 3002
+record  62, available buffer space: 2906
+record  63, available buffer space: 2810
+record  64, available buffer space: 2714
+record  65, available buffer space: 2618
+record  66, available buffer space: 2522
+record  67, available buffer space: 2426
+record  68, available buffer space: 2330
+record  69, available buffer space: 2234
+record  70, available buffer space: 2138
+record  71, available buffer space: 2042
+record  72, available buffer space: 1946
+record  73, available buffer space: 1850
+record  74, available buffer space: 1753
+record  75, available buffer space: 1651
+record  76, available buffer space: 1576
+record  77, available buffer space: 1545
+record  78, available buffer space: 1513
+record  79, available buffer space: 1465
+record  80, available buffer space: 1418
+record  81, available buffer space: 1370
+record  82, available buffer space: 1321
+record  83, available buffer space: 1284
+record  84, available buffer space: 1193
+record  85, available buffer space: 1129
+record  86, available buffer space: 1062
+record  87, available buffer space: 991
+record  88, available buffer space: 914
+record  89, available buffer space: 859
+record  90, available buffer space: 792
+record  91, available buffer space: 740
+record  92, available buffer space: 686
+record  93, available buffer space: 633
+record  94, available buffer space: 580
+record  95, available buffer space: 515
+record  96, available buffer space: 445
+record  97, available buffer space: 414
+record  98, available buffer space: 371
+record  99, available buffer space: 311
+record 100, available buffer space: 241
+record 101, available buffer space: 167
+record 102, available buffer space: 81
+record 103, available buffer space: -12
+net-dns.org.	30	IN	SOA	ns.nlnetlabs.nl. sysadmin.nlnetlabs.nl. 2015081800 450 600 345600 300
+net-dns.org.	30	IN	NS	ns.nlnetlabs.nl.
+net-dns.org.	30	IN	NS	ns.hactrn.net.
+net-dns.org.	30	IN	NS	mcvax.nlnet.nl.
+net-dns.org.	30	IN	NS	sec2.authdns.ripe.net.
+net-dns.org.	30	IN	A	185.49.140.22
+net-dns.org.	30	IN	AAAA	2a04:b900::2:0:0:22
+net-dns.org.	30	IN	MX	10 dicht.nlnetlabs.nl.
+net-dns.org.	30	IN	MX	20 mcvax.nlnet.nl.
+net-dns.org.	30	IN	TXT	"Net::DNS  domain"
+_443._tcp.net-dns.org.	30	IN	TLSA	3 1 1 274C6F96C9885C8050E8A05AD1C3162C1D51752C35B6196474E3F05AD31CD923
+_443._tcp.www.net-dns.org.	30	IN	TLSA	3 1 1 274C6F96C9885C8050E8A05AD1C3162C1D51752C35B6196474E3F05AD31CD923
+dynup.net-dns.org.	30	IN	TXT	"fooFoo2" "Bla ; Foo"
+lists.net-dns.org.	30	IN	A	63.209.15.196
+localhost.net-dns.org.	30	IN	A	127.0.0.1
+overflow.net-dns.org.	30	IN	TXT	"And line 1 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 2 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 3 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 4 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 5 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 6 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 7 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 8 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 9 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 10 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 11 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 12 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 13 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 14 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 15 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 16 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 17 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 18 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 19 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 20 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 21 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 22 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 23 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 25 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 26 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 27 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 28 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 29 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 30 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 31 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 32 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 33 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 34 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 35 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 36 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 37 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 38 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 39 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 40 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 41 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 42 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 43 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 44 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 45 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 46 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 47 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 48 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 49 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 50 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 51 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 52 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 53 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 54 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 55 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 56 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 57 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 58 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 59 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 60 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"And line 224 of al sorts of crap that will just fill the packet "
+overflow.net-dns.org.	30	IN	TXT	"An increadibly large answer section that will lead to packet overflow"
+t.net-dns.org.	30	IN	TXT	"The names within this domain are used for testing"
+a.t.net-dns.org.	30	IN	A	10.0.1.128
+a2.t.net-dns.org.	30	IN	A	10.0.1.129
+cname.t.net-dns.org.	30	IN	CNAME	a.t.net-dns.org.
+mx.t.net-dns.org.	30	IN	MX	10 a.t.net-dns.org.
+mx2.t.net-dns.org.	30	IN	MX	10 a.t.net-dns.org.
+mx2.t.net-dns.org.	30	IN	MX	15 a2.t.net-dns.org.
+txt.t.net-dns.org.	30	IN	TXT	"Net-DNS"
+txt2.t.net-dns.org.	30	IN	TXT	"Net-DNS; complicated $tuff" "sort of \" text; and binary \000 data"
+connection-test.t.net-dns.org.	30	IN	TXT	"connection-test succes"
+txt-utf8.t.net-dns.org.	30	IN	TXT	"\229\143\164\230\177\160\227\130\132" "\232\155\153\233\163\155\232\190\188\227\130\128" "\230\176\180\227\129\174\233\159\179"
+txt-utf8-bin.t.net-dns.org.	30	IN	TXT	"\229\143\164\230\177\160\227\130\132" "\232\155\153\233\163\155\232\190\188\227\130\128" "\230\176\180\227\129\174\233\159\179"
+a.few.empty.non.terminals.t.net-dns.org.	30	IN	TXT	"a" "few" "empty" "non" "terminals"
+a.few.empty.non.terminals.t.net-dns.org.	30	IN	A	185.49.140.22
+a.few.empty.non.terminals.t.net-dns.org.	30	IN	AAAA	2a04:b900::2:0:0:22
+yx1.cname.t.net-dns.org.	30	IN	CNAME	-.t.net-dns.org.
+yx2.cname.t.net-dns.org.	30	IN	CNAME	a-a.t.net-dns.org.
+yx3.cname.t.net-dns.org.	30	IN	CNAME	a\..t.net-dns.org.
+yx4.cname.t.net-dns.org.	30	IN	CNAME	a\000.t.net-dns.org.
+nx1.cname.t.net-dns.org.	30	IN	CNAME	does.not.exist.t.net-dns.org.
+nx2.cname.t.net-dns.org.	30	IN	CNAME	empty.non.terminals.t.net-dns.org.
+www.net-dns.org.	30	IN	A	185.49.140.22
+www.net-dns.org.	30	IN	AAAA	2a04:b900::2:0:0:22
+apl.net-dns.org.	30	IN	APL	1:192.168.42.0/26 1:192.168.42.64/26 !1:192.168.42.128/25 1:224.0.0.0/4 2:ff00:0000:0000:0000:0000:0000:0000:0000/8
+ipseckey0.net-dns.org.	30	IN	IPSECKEY	10 0 2 . AQNRU3mG7TVTO2BkR47usntb102uFJtugbo6BSGvgqt4AQ==
+ipseckey1.net-dns.org.	30	IN	IPSECKEY	10 1 2 192.0.2.38 AQNRU3mG7TVTO2BkR47usntb102uFJtugbo6BSGvgqt4AQ==
+ipseckey2.net-dns.org.	30	IN	IPSECKEY	10 2 2 2001:db8:0:8002::2000:1 AQNRU3mG7TVTO2BkR47usntb102uFJtugbo6BSGvgqt4AQ==

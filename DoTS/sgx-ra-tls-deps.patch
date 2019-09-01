@@ -1,0 +1,13 @@
+diff --git a/ratls-wolfssl.mk b/ratls-wolfssl.mk
+index b8ccdfe..d6d5e7c 100644
+--- a/ratls-wolfssl.mk
++++ b/ratls-wolfssl.mk
+@@ -6,7 +6,7 @@ SGX_MODE ?= HW
+ SGX_ARCH ?= x64
+ PROJECT_ROOT ?= $(shell readlink -f .)
+ 
+-WOLFSSL_ROOT := $(shell readlink -f deps/wolfssl)
++WOLFSSL_ROOT := $(shell readlink -f ../wolfssl)
+ 
+ SGX_COMMON_CFLAGS := -m64
+ SGX_LIBRARY_PATH := $(SGX_SDK)/lib64

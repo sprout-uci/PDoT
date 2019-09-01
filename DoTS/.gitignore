@@ -1,0 +1,9 @@
+/deps
+*.o
+*.so
+*.pcap
+*.swp
+*.json
+*.pcapng
+*.pem
+*.rej

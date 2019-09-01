@@ -1,0 +1,93 @@
+High level release procedure for formal release for the getdns API project.  
+
+1) Git branching for a release
+    -- Confirm with core team (preferably via email) that all commits to be included
+    in the release are in the develop branch. Development for the next release can
+    continue on develop.
+    -- Create a release branch. We use the pattern "release/v1.0.0-b3" for naming
+    release branches. This branch is used for testing
+ 	and bug fixing while preparing the release (which can take several days
+    if there are un-foreseen issues). Note that from this point forward _only_ 
+    bug fixes for this release should be committed to the release branch. 
+    -- Once the release is published there should be no further commits on that
+       release branch.
+
+2) Prepare the release
+	-- Clone the upstream to a _new_ local  directory. (Do NOT re-use and 
+	existing working copy as this can lead to issues).
+
+    # git clone -b v1.0.0-b3 https://github.com/getdnsapi/getdns.git getdns-1.0.0-b3
+
+    -- Update several files to reflect release number/date
+	    ./README.md
+	    ./ChangeLog 
+	    ./configure.ac 
+	      - Check and change the values for:
+	        - AC_INIT
+	        - RELEASE_CANDIDATE
+	        - GETDNS_NUMERIC_VERSION
+		- API_VERSION and API_NUMERUC_VERSION
+		- read the section "Library version" and update GETDNS_LIBVERSION carefully!
+
+	    # autoreconf -fi
+
+	    Commit these changes to the release branch
+
+	    # git commit -a -m "release number and date updates"
+	    # git push
+
+3) Test
+	The unit and tpkg tests should be run on all the supported platforms.  They must all
+	be able to fulfil all requirements. So they must have libidn, libev, libuv, libevent,
+	latest libunbound, latest openssl (at least 1.0.2) latest clang compiler
+	(for static analysis), latest valgrind.  The tests can be run using:
+
+	# ${GETDNS_SRCDIR}/src/test/tpkg/run-all.sh
+
+	and evaluating the results.
+
+4) Build and sign source distribution tarball
+    # rm -fr *
+    # git reset --hard
+    # git submodule update --init
+    # autoreconf -fi
+    # libtoolize -ci
+    # ./configure
+    # make pub
+
+    The resulting tarball must be built, installed and tested on all the supported
+	platforms. Be sure to use a user that was NOT used for the build, this will uncover 
+    any issues related to absolute paths in the build
+
+5) Fix any problems
+	-- If a build breaks or an install fails then commit fixes to the release branch.
+	Then re-run steps 3 and 4 for all supported platforms using the new code.
+
+6) Merge branch changes back into master/develop
+	-- If this is a production release - then the release branch must be merged into master
+	Sign the merge tag if possible. 
+	-- Now the release is ready, all the relevant commits on the release branch
+	should also be merged back into develop. 
+
+7) Create the tarball
+	# make clean
+	# make pub
+	This generates getdns-1.0.0-b3.tar.gz + checksums + signatures.
+
+8) Upload source tarball and checksums and signatures to the getdnsapi.net site
+
+  	# scp getdns-1.0.0-b3.tar.gz* getdnsapi.net:/usr/local/www/apache24/data/dist
+
+9) Create and push signed tags to github
+
+  	# git -s v1.0.0-b3
+  	# git push --tags
+
+10) Update getdnsapi.net web site 
+	- Create an entry the the 'Checksum' page using the content of ChangeLog
+	- Create a new 'News' entry
+
+11) Announce the release to the lists (make sure to sign the emails)
+    users@getdnsapi.net, spec@getdnsapi.net and maintainers@nlnetlabs.nl
+
+

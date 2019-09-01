@@ -1,0 +1,44 @@
+diff --git a/src/sgx_u.mk b/src/sgx_u.mk
+index 830d9e0..d53e0bc 100644
+--- a/src/sgx_u.mk
++++ b/src/sgx_u.mk
+@@ -57,7 +57,7 @@ endif
+ 
+ 
+ 
+-App_C_Files := $(UNTRUSTED_DIR)/App.c $(UNTRUSTED_DIR)/client-tls.c $(UNTRUSTED_DIR)/server-tls.c $(UNTRUSTED_DIR)/sgxsdk-ra-attester_u.c $(UNTRUSTED_DIR)/ias-ra.c
++App_C_Files := $(UNTRUSTED_DIR)/App.c $(UNTRUSTED_DIR)/client-tls.c $(UNTRUSTED_DIR)/server-tls.c $(UNTRUSTED_DIR)/sgxsdk-ra-attester_u.c $(UNTRUSTED_DIR)/ias-ra.c $(UNTRUSTED_DIR)/dns.c
+ App_Include_Paths := $(Wolfssl_Include_Paths) -I$(UNTRUSTED_DIR) -I$(SGX_SDK)/include -I$(SGX_RA_TLS_ROOT) -I../deps/local/include
+ 
+ App_C_Flags := $(SGX_COMMON_CFLAGS) -fPIC -Wno-attributes $(App_Include_Paths) $(Wolfssl_C_Extra_Flags)
+@@ -78,6 +78,7 @@ App_Link_Flags := $(SGX_COMMON_CFLAGS) -L$(SGX_LIBRARY_PATH) -L$(SGX_RA_TLS_ROOT
+ 
+ ifneq ($(SGX_MODE), HW)
+ 	App_Link_Flags += -lsgx_uae_service_sim
++	App_C_Flags += -DNO_IAS
+ else
+ 	App_Link_Flags += -lsgx_uae_service
+ endif
+diff --git a/src/untrusted/ias-ra.c b/src/untrusted/ias-ra.c
+index dbf66b2..ff34a05 100644
+--- a/src/untrusted/ias-ra.c
++++ b/src/untrusted/ias-ra.c
+@@ -227,7 +227,8 @@ void obtain_attestation_verification_report
+         
+         printf("%s", header.data);
+         /* printf("body= %s", body.data); */
+-/*
++
++#if !NO_IAS
+         parse_response_header(header.data, header.len,
+                               attn_report->ias_report_signature,
+                               sizeof(attn_report->ias_report_signature),
+@@ -244,7 +245,7 @@ void obtain_attestation_verification_report
+         extract_certificates_from_response_header(curl,
+                                                   header.data, header.len,
+                                                   attn_report);
+-*/    
++#endif
+         /* Check for errors */
+         if(res != CURLE_OK)
+             fprintf(stderr, "curl_easy_perform() failed: %s\n",

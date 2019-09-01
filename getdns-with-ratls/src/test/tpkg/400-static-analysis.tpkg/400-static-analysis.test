@@ -1,0 +1,14 @@
+# #-- 400-static-analysis.test --#
+# source the master var file when it's there
+[ -f ../.tpkg.var.master ] && source ../.tpkg.var.master
+# use .tpkg.var.test for in test variable passing
+[ -f .tpkg.var.test ] && source .tpkg.var.test
+
+(
+	cd "${BUILDDIR}/build-static-analysis"
+	scan-build -o ../scan-build-reports -v --status-bugs make -j 4 everything
+) || (
+	chmod 0400 ./400-static-analysis
+	scp -o "StrictHostKeyChecking no" -i ./400-static-analysis -r "${BUILDDIR}/scan-build-reports" static-analysis@getdnsapi.net:scan-build-resports-$$-`date +%s`
+	false
+     )
