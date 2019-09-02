@@ -1,0 +1,17 @@
+resolution_type: GETDNS_RESOLUTION_STUB
+dns_transport_list:
+  - GETDNS_TRANSPORT_TLS
+tls_authentication: GETDNS_AUTHENTICATION_REQUIRED
+tls_query_padding_blocksize: 128
+edns_client_subnet_private : 1
+round_robin_upstreams: 1
+idle_timeout: 10000
+listen_addresses:
+  - 127.0.0.1@53
+  - 0::1@53
+upstream_recursive_servers:
+  - address_data: 128.195.4.71
+    tls_port: 11111
+    tls_pubkey_pinset:
+      - digest: "sha256"
+        value: Wz7+8IantGN7KEPQqPtcXnvx5AtJ4YIYQHf0sUBe3c0=

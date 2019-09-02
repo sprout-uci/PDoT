@@ -1,0 +1,15 @@
+/pcap
+/lib
+/dots-config/*.yml
+/normal-config/*.yml
+/images
+/csv
+*.o
+*.so
+*.pcap
+*.swp
+*.json
+*.pcapng
+*.pem
+*.rej
+*.csv
