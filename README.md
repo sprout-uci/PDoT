@@ -56,11 +56,24 @@ cd src
 make SGX_MODE=HW SGX_DEBUG=1
 ```
 
-## Run the server:
+## Run the PDoT server:
 ```bash
-src/App -s
+./App -s
 ```
 `V1`: Copy the value shown after the prompt `MRENCLAVE`.
+
+> **NOTE:** If the server does not start, re-compile the server.
+> ```bash
+> make clean
+> make SGX_MODE=HW SGX_DEBUG=1
+> ```
+> The authors have not found found other ways to overcome this.
+
+## Stopping the server:
+Press `Ctrl+C` to stop the server.
+
+> If the server is not stopped using `Ctrl+C`, the server will not start normally next time.
+> Follow the instruction show above to re-compile the server.
 
 # Building Stubby with SGX support
 
@@ -135,3 +148,5 @@ Run the following.
 ```bash
 dig @127.0.0.1 google.com
 ```
+
+> If Stubby returns an error saying that the remote attestation cannot be done, re-compile the server.
