@@ -9,16 +9,16 @@ case ${option} in
   "one") END_PORT=$2
     echo "Running experiment for one time..."
     #echo "Running stubby..."
-    cd ~/research/getdns/build/src
+    cd ~/getdns/build/src
     for i in $(seq $START_PORT $END_PORT)
     do
       #echo "Running stubby with dots-stubby-$i.yml"
-      nohup sudo -b ./stubby -C ~/research/DoTS-experiment/normal-config/normal-stubby-${i}.yml > /dev/null 2>&1 &
+      nohup sudo -b ./stubby -C ~/DoTS-experiment/normal-config/normal-stubby-${i}.yml > /dev/null 2>&1 &
       sleep 1 
     done
     sleep 5 
     #echo "Running DoTS measurement..."
-    cd ~/research/DoTS-experiment
+    cd ~/DoTS-experiment
     START_TIME=$(($(date +"%s%N")/1000000))
     seq $START_PORT $END_PORT | parallel ./parallel.py normal {} "$(($END_PORT-$START_PORT+1))"
     END_TIME=$(($(date +"%s%N")/1000000))
@@ -31,16 +31,16 @@ case ${option} in
     for j in $(seq 1 10)
     do
       #echo "Running stubby..."
-      cd ~/research/getdns/build/src
+      cd ~/getdns/build/src
       for i in $(seq $START_PORT $END_PORT)
       do
         #echo "Running stubby with dots-stubby-$i.yml"
-        nohup sudo -b ./stubby -C ~/research/DoTS-experiment/normal-config/normal-stubby-${i}.yml > /dev/null 2>&1 &
+        nohup sudo -b ./stubby -C ~/DoTS-experiment/normal-config/normal-stubby-${i}.yml > /dev/null 2>&1 &
         sleep 1 
       done
       sleep 5 
       #echo "Running DoTS measurement..."
-      cd ~/research/DoTS-experiment
+      cd ~/DoTS-experiment
       START_TIME=$(($(date +"%s%N")/1000000))
       seq $START_PORT $END_PORT | parallel ./parallel.py normal {} "$(($END_PORT-$START_PORT+1))"
       END_TIME=$(($(date +"%s%N")/1000000))
@@ -57,16 +57,16 @@ case ${option} in
       for j in $(seq 1 10)
       do
         #echo "Running stubby..."
-        cd ~/research/getdns/build/src
+        cd ~/getdns/build/src
         for i in $(seq $START_PORT $END_PORT)
         do
           #echo "Running stubby with dots-stubby-$i.yml"
-          nohup sudo -b ./stubby -C ~/research/DoTS-experiment/normal-config/normal-stubby-${i}.yml > /dev/null 2>&1 &
+          nohup sudo -b ./stubby -C ~/DoTS-experiment/normal-config/normal-stubby-${i}.yml > /dev/null 2>&1 &
           sleep 1 
         done
         sleep 5 
         #echo "Running DoTS measurement..."
-        cd ~/research/DoTS-experiment
+        cd ~/DoTS-experiment
         START_TIME=$(($(date +"%s%N")/1000000))
         seq $START_PORT $END_PORT | parallel ./parallel.py normal {} "$(($END_PORT-$START_PORT+1))"
         END_TIME=$(($(date +"%s%N")/1000000))

@@ -10,16 +10,16 @@ case ${option} in
     END_PORT=$2
     echo "Running experiment for one time..."
     #echo "Running stubby..."
-    cd ~/research/getdns/build/src
+    cd ~/getdns/build/src
     for i in $(seq $START_PORT $END_PORT)
     do
       #echo "Running stubby with dots-stubby-$i.yml"
-      nohup sudo -b ./stubby -C ~/research/DoTS-experiment/normal-config/normal-stubby-${i}.yml > /dev/null 2>&1 &
+      nohup sudo -b ./stubby -C ~/DoTS-experiment/normal-config/normal-stubby-${i}.yml > /dev/null 2>&1 &
       sleep 1 
     done
     sleep 5 
     #echo "Running DoTS measurement..."
-    cd ~/research/DoTS-experiment
+    cd ~/DoTS-experiment
     seq $START_PORT $END_PORT | parallel -j $(($END_PORT-$START_PORT+1)) ./rate_parallel.py unbound {} $3 $(($END_PORT-$START_PORT+1))
     #echo "Cleaning up DoTS measurement..."
     sleep 5 
@@ -31,16 +31,16 @@ case ${option} in
     do
       echo "Experiment for $(($END_PORT-$START_PORT+1)) clients:"
       #echo "Running stubby..."
-      cd ~/research/getdns/build/src
+      cd ~/getdns/build/src
       for i in $(seq $START_PORT $END_PORT)
       do
         #echo "Running stubby with dots-stubby-$i.yml"
-        nohup sudo -b ./stubby -C ~/research/DoTS-experiment/normal-config/normal-stubby-${i}.yml > /dev/null 2>&1 &
+        nohup sudo -b ./stubby -C ~/DoTS-experiment/normal-config/normal-stubby-${i}.yml > /dev/null 2>&1 &
         sleep 1 
       done
       sleep 3 
       #echo "Running DoTS measurement..."
-      cd ~/research/DoTS-experiment
+      cd ~/DoTS-experiment
       seq $START_PORT $END_PORT | parallel -j $(($END_PORT-$START_PORT+1)) ./rate_parallel.py unbound {} $2 $(($END_PORT-$START_PORT+1))
       #echo "Cleaning up DoTS measurement..."
       sleep 5 
@@ -56,16 +56,16 @@ case ${option} in
     for j in $(seq 5 5 100)
     do
       #echo "Running stubby..."
-      cd ~/research/getdns/build/src
+      cd ~/getdns/build/src
       for i in $(seq $START_PORT $END_PORT)
       do
         #echo "Running stubby with dots-stubby-$i.yml"
-        nohup sudo -b ./stubby -C ~/research/DoTS-experiment/normal-config/normal-stubby-${i}.yml > /dev/null 2>&1 &
+        nohup sudo -b ./stubby -C ~/DoTS-experiment/normal-config/normal-stubby-${i}.yml > /dev/null 2>&1 &
         sleep 1 
       done
       sleep 3 
       #echo "Running DoTS measurement..."
-      cd ~/research/DoTS-experiment
+      cd ~/DoTS-experiment
       seq $START_PORT $END_PORT | parallel -j $(($END_PORT-$START_PORT+1)) ./rate_parallel.py unbound {} $j $(($END_PORT-$START_PORT+1))
       #echo "Cleaning up DoTS measurement..."
       sleep 5 

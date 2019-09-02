@@ -2,7 +2,7 @@
 
 # Run DoTS measurement
 echo "Running stubby..."
-cd ~/research/DoTS-experiment
+cd ~/DoTS-experiment
 echo "Running DoTS measurement (cold start)..."
 for i in $(seq 0 999)
 do
@@ -29,17 +29,17 @@ sleep 3
 
 # Run unbound measurement
 echo "Running unbound..."
-unbound -c ~/research/DoTS-experiment/unbound.conf
+unbound -c ~/DoTS-experiment/unbound.conf
 sleep 3
 echo "Running stubby..."
-cd ~/research/DoTS-experiment
+cd ~/DoTS-experiment
 echo "Running unbound measurement (cold start)..."
 for i in $(seq 0 999)
 do
-  cd ~/research/getdns/build/src
-  sudo -b ./stubby -C ~/research/DoTS-experiment/normal-stubby.yml -g > /dev/null 2>&1 &
+  cd ~/getdns/build/src
+  sudo -b ./stubby -C ~/DoTS-experiment/normal-stubby.yml -g > /dev/null 2>&1 &
   sleep 2
-  cd ~/research/DoTS-experiment
+  cd ~/DoTS-experiment
   ./latency.py unbound cold $i
   sudo pkill stubby
   sleep 1
@@ -47,10 +47,10 @@ done
 echo "Running unbound measurement (warm start)..."
 for i in $(seq 0 99)
 do
-  cd ~/research/getdns/build/src
-  sudo -b ./stubby -C ~/research/DoTS-experiment/normal-stubby.yml -g > /dev/null 2>&1 &
+  cd ~/getdns/build/src
+  sudo -b ./stubby -C ~/DoTS-experiment/normal-stubby.yml -g > /dev/null 2>&1 &
   sleep 2
-  cd ~/research/DoTS-experiment
+  cd ~/DoTS-experiment
   ./latency.py unbound warm $i
   sudo pkill stubby
   sleep 1

@@ -15,6 +15,11 @@
  - `normal_rate_measurement.sh`: Shell script that will setup multiple Stubby instances and run `rate_parallel.py` to conduct throughput experiment for Unbound.
  - `throughput_plot_rate.py`: Python script used to create Figure 5 in the PDoT paper.
 
+# Download, Compile, and Run Unbound
+Clone Unbound from Github: `git clone https://github.com/getdnsapi/getdns.git`
+
+Follow the README to compile and run Unbound.
+
 # Conducting each experiment
 ## Latency evaluation
  1. Make `csv` directory to store the measurement outputs: `mkdir csv`

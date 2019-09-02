@@ -10,7 +10,7 @@ case ${option} in
     END_PORT=$2
     echo "Running experiment for one time..."
     #echo "Running stubby..."
-    cd ~/research/DoTS-experiment
+    cd ~/DoTS-experiment
     for i in $(seq $START_PORT $END_PORT)
     do
       #echo "Running stubby with dots-stubby-$i.yml"
@@ -30,7 +30,7 @@ case ${option} in
     do
       echo "Experiment for $(($END_PORT-$START_PORT+1)) clients:"
       #echo "Running stubby..."
-      cd ~/research/DoTS-experiment
+      cd ~/DoTS-experiment
       for i in $(seq $START_PORT $END_PORT)
       do
         #echo "Running stubby with dots-stubby-$i.yml"
@@ -54,7 +54,7 @@ case ${option} in
     for j in $(seq 5 5 100)
     do
       #echo "Running stubby..."
-      cd ~/research/DoTS-experiment
+      cd ~/DoTS-experiment
       for i in $(seq $START_PORT $END_PORT)
       do
         #echo "Running stubby with dots-stubby-$i.yml"

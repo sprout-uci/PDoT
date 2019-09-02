@@ -150,3 +150,8 @@ dig @127.0.0.1 google.com
 ```
 
 > If Stubby returns an error saying that the remote attestation cannot be done, re-compile the server.
+
+# Run Experiments
+`DoTS-experiments` directory includes scripts for running the experiments.
+
+Follow the README file in that directory to conduct necessary experiments.
