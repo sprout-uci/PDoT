@@ -306,22 +306,14 @@ void obtain_attestation_verification_report
                               sizeof(attn_report->ias_report_signature),
                               &attn_report->ias_report_signature_len);
 
-        // TODO: this is a sort of hardcoded way to solve the EVP_DecodeBlock error problem. There should be a better solution.
-        int body_base64_size;
-        if (965 != body.len) {
-            body_base64_size = (body.len - 1 + (3 - body.len % 3)) / 3 * 4;
-        }
-        else {
-            body_base64_size = (body.len + (3 - body.len % 3)) / 3 * 4;
-        }
-        // printf("body.len: %lu, body_base64_size: %i, body size: %lu\n", body.len, body_base64_size, strlen(body.data));
-        // printf("%c, %c, %c, %c, %c, %c\n", body.data[body.len-1], body.data[body.len-2], body.data[body.len-3], body.data[2], body.data[1], body.data[0]);
-         // +1 since EVP_EncodeBlock() puts a \0 at the end ...
-        assert(sizeof(attn_report->ias_report) >= (size_t) body_base64_size + 1);
+        char *e;
+        e = strchr(body.data, '}');
+        body.len = (int)(e - body.data) + 1;
+        assert(sizeof(attn_report->ias_report) >= body.len);
         ret = EVP_EncodeBlock(attn_report->ias_report,
                               (unsigned char*) body.data, body.len);
-         // Here we ignore the trailing \0
-        attn_report->ias_report_len = body_base64_size;
+        // Here we ignore the trailing \0
+        attn_report->ias_report_len = ret;
 
         extract_certificates_from_response_header(curl,
                                                   header.data, header.len,
