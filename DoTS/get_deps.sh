@@ -22,7 +22,8 @@ fi
 if [ ! -d curl ] ; then
     git clone https://github.com/curl/curl.git
     pushd curl
-    git checkout curl-7_47_0
+    # git checkout curl-7_47_0
+    git checkout curl-7_69_1
     popd
 fi
 

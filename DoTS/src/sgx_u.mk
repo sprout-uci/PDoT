@@ -74,13 +74,12 @@ else
         App_C_Flags += -DNDEBUG -UEDEBUG -UDEBUG
 endif
 
-App_Link_Flags := $(SGX_COMMON_CFLAGS) -L$(SGX_LIBRARY_PATH) -L$(SGX_RA_TLS_ROOT)/deps/local/lib -l$(Urts_Library_Name) -lpthread -lssl -lcrypto -lcurl
+App_Link_Flags := $(SGX_COMMON_CFLAGS) -L$(SGX_LIBRARY_PATH) -L../deps/local/lib -l$(Urts_Library_Name) -lpthread -lssl -lcrypto -lcurl
 
 ifneq ($(SGX_MODE), HW)
-	App_Link_Flags += -lsgx_uae_service_sim
-	App_C_Flags += -DNO_IAS
+	App_Link_Flags += -lsgx_epid_sim -lsgx_quote_ex_sim
 else
-	App_Link_Flags += -lsgx_uae_service
+	App_Link_Flags += -lsgx_epid -lsgx_quote_ex
 endif
 
 App_C_Objects := $(App_C_Files:.c=.o)
