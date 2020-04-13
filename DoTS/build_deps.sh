@@ -28,7 +28,7 @@ make -j`nproc` || exit 1
 make install || exit 1
     # Add -DDEBUG_WOLFSSL to CFLAGS for debug
 pushd IDE/LINUX-SGX
-make -f sgx_t_static.mk SGX_DEBUG=1 CFLAGS="-DUSER_TIME -DWOLFSSL_SGX_ATTESTATION -DWOLFSSL_KEY_GEN -DWOLFSSL_CERT_GEN -DWOLFSSL_CERT_EXT" || exit 1
+make -f sgx_t_static.mk SGX_DEBUG=1 CFLAGS="-DUSER_TIME -DWOLFSSL_SGX_ATTESTATION -DWOLFSSL_KEY_GEN -DWOLFSSL_CERT_GEN -DWOLFSSL_CERT_EXT -DFP_MAX_BITS=8192" || exit 1
 cp libwolfssl.sgx.static.lib.a ../../../local/lib
 popd
 popd
@@ -43,6 +43,10 @@ popd
 
 
 pushd sgx-ra-tls
+if [ ! -f ra_tls_options.c ] ; then
+    echo "Please run 'SPID={} EPID_SUBSCRIPTION_KEY={} QUOTE_TYPE=SGX_LINKABLE_SIGNATURE bash ra_tls_options.c.sh > ra_tls_options'."
+    exit 1
+fi
 make -f ratls-wolfssl.mk || exit 1
 popd
 

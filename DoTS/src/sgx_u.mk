@@ -74,7 +74,7 @@ else
         App_C_Flags += -DNDEBUG -UEDEBUG -UDEBUG
 endif
 
-App_Link_Flags := $(SGX_COMMON_CFLAGS) -L$(SGX_LIBRARY_PATH) -L../deps/local/lib -l$(Urts_Library_Name) -lpthread -lssl -lcrypto -lcurl
+App_Link_Flags := $(SGX_COMMON_CFLAGS) -L$(SGX_LIBRARY_PATH) -L../deps/local/lib -l$(Urts_Library_Name) -lpthread -lssl -lcrypto -lcurl ../deps/local/lib/libwolfssl.a -lz -lm
 
 ifneq ($(SGX_MODE), HW)
 	App_Link_Flags += -lsgx_epid_sim -lsgx_quote_ex_sim
