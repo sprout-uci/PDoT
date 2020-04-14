@@ -41,7 +41,7 @@ else
 	Urts_Library_Name := sgx_urts
 endif
 
-Wolfssl_C_Extra_Flags := -DWOLFSSL_SGX
+Wolfssl_C_Extra_Flags := -DWOLFSSL_SGX -DUSE_WOLFSSL
 Wolfssl_Include_Paths := -I$(WOLFSSL_ROOT)/ \
 						 -I$(WOLFSSL_ROOT)/wolfcrypt/
 
@@ -108,6 +108,8 @@ all: App
 
 else
 all: App
+	cp $(SGX_RA_TLS_ROOT)/sgxsdk-ra-attester_u.c $(UNTRUSTED_DIR)/.
+	cp $(SGX_RA_TLS_ROOT)/ias-ra.c $(UNTRUSTED_DIR)/.
 endif
 
 run: all
