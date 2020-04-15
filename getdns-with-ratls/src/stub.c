@@ -58,7 +58,7 @@
 #ifdef USE_DANESSL
 # include "ssl_dane/danessl.h"
 #endif
-#include "ra-challenger.h"
+#include "sgx_quote.h"
 
 /* WSA TODO: 
  * STUB_TCP_RETRY added to deal with edge triggered event loops (versus

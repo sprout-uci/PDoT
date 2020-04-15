@@ -82,7 +82,7 @@ DEFAULT_EVENTLOOP_OBJ=@DEFAULT_EVENTLOOP@.lo
 GETDNS_OBJ=const-info.lo convert.lo dict.lo dnssec.lo general.lo \
 	list.lo request-internal.lo platform.lo pubkey-pinning.lo rr-dict.lo \
 	rr-iter.lo server.lo stub.lo sync.lo ub_loop.lo util-internal.lo \
-	mdns.lo ra-challenger.lo openssl-ra-challenger.lo ias_sign_ca_cert.lo
+	mdns.lo ra.lo openssl-ra-challenger.lo ias_sign_ca_cert.lo
 
 
 GLDNS_OBJ=keyraw.lo gbuffer.lo wire2str.lo parse.lo parseutil.lo rrdef.lo \
@@ -458,11 +458,10 @@ server.lo server.o: $(srcdir)/server.c \
  $(srcdir)/util/orig-headers/lruhash.h $(srcdir)/util/locks.h $(srcdir)/util/orig-headers/locks.h \
  $(srcdir)/util/auxiliary/util/log.h $(srcdir)/debug.h $(srcdir)/rr-iter.h $(srcdir)/rr-dict.h $(srcdir)/gldns/gbuffer.h \
  $(srcdir)/gldns/pkthdr.h $(srcdir)/anchor.h $(srcdir)/util-internal.h $(srcdir)/platform.h
-ra-challenger.lo ra-challenger.o: $(srcdir)/ra-challenger.c \
- $(srcdir)/ra-challenger.h \
+ra.lo ra.o: $(srcdir)/ra.c
+openssl-ra-challenger.lo openssl-ra-challenger.o: $(srcdir)/openssl-ra-challenger.c \
  $(srcdir)/ra.h \
  $(srcdir)/ra-challenger_private.h
-openssl-ra-challenger.lo openssl-ra-challenger.o: $(srcdir)/openssl-ra-challenger.c
 ias_sign_ca_cert.lo ias_sign_ca_cert.o: $(srcdir)/ias_sign_ca_cert.c
 stub.lo stub.o: $(srcdir)/stub.c \
  config.h \

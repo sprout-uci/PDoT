@@ -108,8 +108,6 @@ all: App
 
 else
 all: App
-	cp $(SGX_RA_TLS_ROOT)/sgxsdk-ra-attester_u.c $(UNTRUSTED_DIR)/.
-	cp $(SGX_RA_TLS_ROOT)/ias-ra.c $(UNTRUSTED_DIR)/.
 endif
 
 run: all

@@ -51,7 +51,7 @@
 #include "rr-iter.h"
 #include "anchor.h"
 
-#include "ra-challenger.h"
+#include "sgx_report.h"
 
 struct getdns_dns_req;
 struct ub_ctx;

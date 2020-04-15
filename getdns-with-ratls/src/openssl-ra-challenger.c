@@ -10,13 +10,27 @@
 #include <openssl/pem.h>
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
+#include <openssl/objects.h>
+
+#include <sgx_quote.h>
 
 #include "ra.h"
-#include "ra-challenger.h"
-#include "ra-challenger_private.h"
 
 extern unsigned char ias_sign_ca_cert_der[];
 extern unsigned int ias_sign_ca_cert_der_len;
+
+extern const uint8_t ias_response_body_oid[];
+extern const uint8_t ias_root_cert_oid[];
+extern const uint8_t ias_leaf_cert_oid[];
+extern const uint8_t ias_report_signature_oid[];
+
+extern const uint8_t quote_oid[];
+extern const uint8_t pck_crt_oid[];
+extern const uint8_t pck_sign_chain_oid[];
+extern const uint8_t tcb_info_oid[];
+extern const uint8_t tcb_sign_chain_oid[];
+
+extern const size_t ias_oid_len;
 
 /* The functions get_extension(), get_and_decode_ext() and
    openssl_extract_x509_extensions() use the OpenSSL API to extract
@@ -29,7 +43,6 @@ extern unsigned int ias_sign_ca_cert_der_len;
    switch back in the future.
  */
 
-#if 0
 /**
  * Given an X509 extension OID, return its data.
  */
@@ -44,7 +57,7 @@ void get_extension
 )
 {
     // https://zakird.com/2013/10/13/certificate-parsing-with-openssl
-    STACK_OF(X509_EXTENSION) *exts = crt->cert_info->extensions;
+    STACK_OF(X509_EXTENSION) *exts = X509_get0_extensions(crt);
 
     int num_of_exts;
     if (exts) {
@@ -61,11 +74,11 @@ void get_extension
         ASN1_OBJECT *obj = X509_EXTENSION_get_object(ex);
         assert(obj != NULL);
 
-        if (oid_len != obj->length) continue;
+        if (oid_len != OBJ_length(obj)) continue;
         
-        if (0 == memcmp(obj->data, oid, obj->length)) {
-            *data = ex->value->data;
-            *data_len = ex->value->length;
+        if (0 == memcmp(OBJ_get0_data(obj), oid, OBJ_length(obj))) {
+            *data = X509_EXTENSION_get_data(ex);
+            *data_len = ASN1_STRING_length(X509_EXTENSION_get_data(ex));
             break;
         }
     }
@@ -122,40 +135,6 @@ void openssl_extract_x509_extensions
            attn_report->ias_sign_ca_cert_len != 0 &&
            attn_report->ias_report_len != 0);
 }
-#endif
-
-void get_quote_from_cert
-(
-    const uint8_t* der_crt,
-    uint32_t der_crt_len,
-    sgx_quote_t* q
-)
-{
-    (void) q;
-    X509* crt = NULL;
-
-    crt = d2i_X509(NULL, &der_crt, der_crt_len);
-    assert(crt != NULL);
-
-    STACK_OF(X509_EXTENSION) *exts = crt->cert_info->extensions;
-    assert(exts != 0);
-
-    int num_of_exts = sk_X509_EXTENSION_num(exts);
-    assert(num_of_exts >= 0);
-
-    for (int i=0; i < num_of_exts; i++) {
-        X509_EXTENSION *ex = sk_X509_EXTENSION_value(exts, i);
-        assert(ex != NULL);
-        ASN1_OBJECT *obj = X509_EXTENSION_get_object(ex);
-        assert(obj != NULL);
-
-        if (0 == memcmp(obj->data, ias_response_body_oid + 2, obj->length)) {
-            get_quote_from_report(ex->value->data, ex->value->length, q);
-            return;
-        }
-    }
-    assert(0);
-}
 
 void get_quote_from_report
 (
@@ -189,6 +168,39 @@ void get_quote_from_report
     memset(quote, 0, sizeof(sgx_quote_t));
     memcpy(quote, quote_bin, quote_bin_len);
     free(quote_bin);
+}
+
+void get_quote_from_cert
+(
+    const uint8_t* der_crt,
+    uint32_t der_crt_len,
+    sgx_quote_t* q
+)
+{
+    (void) q;
+    X509* crt = NULL;
+
+    crt = d2i_X509(NULL, &der_crt, der_crt_len);
+    assert(crt != NULL);
+
+    STACK_OF(X509_EXTENSION) *exts = X509_get0_extensions(crt);
+    assert(exts != 0);
+
+    int num_of_exts = sk_X509_EXTENSION_num(exts);
+    assert(num_of_exts >= 0);
+
+    for (int i=0; i < num_of_exts; i++) {
+        X509_EXTENSION *ex = sk_X509_EXTENSION_value(exts, i);
+        assert(ex != NULL);
+        ASN1_OBJECT *obj = X509_EXTENSION_get_object(ex);
+        assert(obj != NULL);
+
+        if (0 == memcmp(OBJ_get0_data(obj), ias_response_body_oid + 2, OBJ_length(obj))) {
+            get_quote_from_report(X509_EXTENSION_get_data(ex), ASN1_STRING_length(X509_EXTENSION_get_data(ex)), q);
+            return;
+        }
+    }
+    assert(0);
 }
 
 static
@@ -331,8 +343,7 @@ int verify_sgx_cert_extensions
     X509* crt = d2i_X509(NULL, &p, der_crt_len);
     assert(crt != NULL);
 
-    extract_x509_extensions(crt->cert_info->enc.enc, crt->cert_info->enc.len,
-                            &attn_report);
+    openssl_extract_x509_extensions(crt, &attn_report);
 
     /* Base64 decode IAS report signature. */
     uint8_t base64[sizeof(attn_report.ias_report_signature)];

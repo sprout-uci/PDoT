@@ -1,0 +1,15 @@
+--- ../../deps/sgx-ra-tls/ias-ra.c	2020-04-12 21:37:46.029910260 -0700
++++ ias-ra.c	2020-04-14 19:22:56.798346406 -0700
+@@ -234,6 +234,12 @@
+     base64_encode((uint8_t*) quote, quote_size,
+                   quote_base64, &quote_base64_len);
+ 
++    printf("MRENCLAVE: ");
++    unsigned char* mr_enclave_hash[44];
++    size_t out_len = sizeof(mr_enclave_hash);
++    base64_encode((unsigned char*)quote->report_body.mr_enclave.m, SGX_HASH_SIZE, mr_enclave_hash, &out_len);
++    printf("%s\n", mr_enclave_hash);
++
+     snprintf(json, sizeof(json), json_template, quote_base64);
+ 
+     CURL *curl = curl_easy_init();

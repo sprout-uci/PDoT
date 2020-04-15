@@ -33,3 +33,13 @@ fi
 #fi
 
 popd
+
+pushd src
+
+cp ../deps/sgx-ra-tls/sgxsdk-ra-attester_u.c untrusted/.
+cp ../deps/sgx-ra-tls/ias-ra.c untrusted/.
+pushd untrusted
+patch < ias-ra.patch || exit 1
+popd
+
+popd
