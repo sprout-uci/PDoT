@@ -60,7 +60,11 @@ void get_extension
 )
 {
     // https://zakird.com/2013/10/13/certificate-parsing-with-openssl
+#if OPENSSL_VERSION_NUMBER < 0x10100000
+    STACK_OF(X509_EXTENSION) *exts = crt->cert_info->extensions;
+#else
     STACK_OF(X509_EXTENSION) *exts = X509_get0_extensions(crt);
+#endif
 
     int num_of_exts;
     if (exts) {
@@ -74,11 +78,20 @@ void get_extension
     for (int i=0; i < num_of_exts; i++) {
         X509_EXTENSION *ex = sk_X509_EXTENSION_value(exts, i);
         assert(ex != NULL);
-        ASN1_OCTET_STRING *ex_data = X509_EXTENSION_get_data(ex);
-        assert(ex_data != NULL);
         ASN1_OBJECT *obj = X509_EXTENSION_get_object(ex);
         assert(obj != NULL);
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000
+        if (oid_len != obj->length) continue;
+        
+        if (0 == memcmp(obj->data, oid, obj->length)) {
+            *data = ex->value->data;
+            *data_len = ex->value->length;
+            break;
+        }
+#else
+        ASN1_OCTET_STRING *ex_data = X509_EXTENSION_get_data(ex);
+        assert(ex_data != NULL);
         if (oid_len != OBJ_length(obj)) continue;
         
         if (0 == memcmp(OBJ_get0_data(obj), oid, OBJ_length(obj))) {
@@ -86,6 +99,7 @@ void get_extension
             *data_len = ASN1_STRING_length(ex_data);
             break;
         }
+#endif
     }
 }
 
@@ -188,7 +202,11 @@ void get_quote_from_cert
     crt = d2i_X509(NULL, &der_crt, der_crt_len);
     assert(crt != NULL);
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000
+    STACK_OF(X509_EXTENSION) *exts = crt->cert_info->extensions;
+#else
     STACK_OF(X509_EXTENSION) *exts = X509_get0_extensions(crt);
+#endif
     assert(exts != 0);
 
     int num_of_exts = sk_X509_EXTENSION_num(exts);
@@ -197,15 +215,21 @@ void get_quote_from_cert
     for (int i=0; i < num_of_exts; i++) {
         X509_EXTENSION *ex = sk_X509_EXTENSION_value(exts, i);
         assert(ex != NULL);
-        ASN1_OCTET_STRING *ex_data = X509_EXTENSION_get_data(ex);
-        assert(ex_data != NULL);
         ASN1_OBJECT *obj = X509_EXTENSION_get_object(ex);
         assert(obj != NULL);
-
+#if OPENSSL_VERSION_NUMBER < 0x10100000
+        if (0 == memcmp(obj->data, ias_response_body_oid + 2, obj->length)) {
+            get_quote_from_report(ex->value->data, ex->value->length, q);
+            return;
+        }
+#else
+        ASN1_OCTET_STRING *ex_data = X509_EXTENSION_get_data(ex);
+        assert(ex_data != NULL);
         if (0 == memcmp(OBJ_get0_data(obj), ias_response_body_oid + 2, OBJ_length(obj))) {
             get_quote_from_report(ASN1_STRING_get0_data(ex_data), ASN1_STRING_length(ex_data), q);
             return;
         }
+#endif
     }
     assert(0);
 }

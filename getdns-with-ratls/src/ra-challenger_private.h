@@ -2,6 +2,7 @@
 #include <stddef.h>
 
 #include <sgx_quote.h>
+#include <ra.h>
 
 extern const uint8_t ias_response_body_oid[];
 extern const uint8_t ias_root_cert_oid[];
