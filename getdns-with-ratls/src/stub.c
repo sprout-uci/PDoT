@@ -875,7 +875,7 @@ tls_requested(getdns_network_req *netreq)
 }
 
 
-#if defined(HAVE_SSL_DANE_ENABLE) || defined(USE_DANESSL) && !defined(USE_SGX)
+#if (defined(HAVE_SSL_DANE_ENABLE) || defined(USE_DANESSL)) && !defined(USE_SGX)
 
 static int
 _getdns_tls_verify_always_ok(int ok, X509_STORE_CTX *ctx)
@@ -1110,7 +1110,7 @@ tls_create_object(getdns_dns_req *dnsreq, int fd, getdns_upstream *upstream)
 		DEBUG_STUB("%s %-35s: Using Strict TLS \n", STUB_DEBUG_SETUP_TLS, 
 		             __FUNC__);
 	}
-#if defined(HAVE_SSL_DANE_ENABLE)
+#if defined(HAVE_SSL_DANE_ENABLE) && !defined(USE_SGX)
 	int osr;
 # if defined(STUB_DEBUG) && STUB_DEBUG
 	osr =

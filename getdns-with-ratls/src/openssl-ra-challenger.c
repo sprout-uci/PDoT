@@ -32,6 +32,9 @@ extern const uint8_t tcb_sign_chain_oid[];
 
 extern const size_t ias_oid_len;
 
+// Define the below to allow out-of-date group signatures.
+#define SGX_GROUP_OUT_OF_DATE
+
 /* The functions get_extension(), get_and_decode_ext() and
    openssl_extract_x509_extensions() use the OpenSSL API to extract
    X.509 extensions from the certificate. The generic function
@@ -71,14 +74,16 @@ void get_extension
     for (int i=0; i < num_of_exts; i++) {
         X509_EXTENSION *ex = sk_X509_EXTENSION_value(exts, i);
         assert(ex != NULL);
+        ASN1_OCTET_STRING *ex_data = X509_EXTENSION_get_data(ex);
+        assert(ex_data != NULL);
         ASN1_OBJECT *obj = X509_EXTENSION_get_object(ex);
         assert(obj != NULL);
 
         if (oid_len != OBJ_length(obj)) continue;
         
         if (0 == memcmp(OBJ_get0_data(obj), oid, OBJ_length(obj))) {
-            *data = X509_EXTENSION_get_data(ex);
-            *data_len = ASN1_STRING_length(X509_EXTENSION_get_data(ex));
+            *data = ASN1_STRING_get0_data(ex_data);
+            *data_len = ASN1_STRING_length(ex_data);
             break;
         }
     }
@@ -192,11 +197,13 @@ void get_quote_from_cert
     for (int i=0; i < num_of_exts; i++) {
         X509_EXTENSION *ex = sk_X509_EXTENSION_value(exts, i);
         assert(ex != NULL);
+        ASN1_OCTET_STRING *ex_data = X509_EXTENSION_get_data(ex);
+        assert(ex_data != NULL);
         ASN1_OBJECT *obj = X509_EXTENSION_get_object(ex);
         assert(obj != NULL);
 
         if (0 == memcmp(OBJ_get0_data(obj), ias_response_body_oid + 2, OBJ_length(obj))) {
-            get_quote_from_report(X509_EXTENSION_get_data(ex), ASN1_STRING_length(X509_EXTENSION_get_data(ex)), q);
+            get_quote_from_report(ASN1_STRING_get0_data(ex_data), ASN1_STRING_length(ex_data), q);
             return;
         }
     }
