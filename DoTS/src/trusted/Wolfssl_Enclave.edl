@@ -7,6 +7,8 @@ enclave {
     include "wolfcrypt/test/test.h"
     include "wolfcrypt/benchmark/benchmark.h"
 
+	include "common.h"
+
 	include "dns.h"
 
     from "ra_tls.edl" import *;
@@ -16,7 +18,8 @@ enclave {
         public int wc_test([user_check]void* args);
         public int wc_benchmark_test([user_check]void* args);
 
-		public int enc_wolfSSL_Init(void);
+		public int enc_wolfSSL_Init([user_check] struct ClientQueue* cq);
+		public void enc_create_ssls([user_check]WOLFSSL_CTX* ctx);
 		public void enc_wolfSSL_Debugging_ON(void);
 		public void enc_wolfSSL_Debugging_OFF(void);
 		public WOLFSSL_METHOD* enc_wolfTLSv1_2_client_method(void);
@@ -40,20 +43,16 @@ enclave {
 												int type);
         public int enc_wolfSSL_CTX_set_cipher_list([user_check] WOLFSSL_CTX* ctx,
 												[in, string] const char* list);
-        public WOLFSSL* enc_wolfSSL_new([user_check] WOLFSSL_CTX* ctx);
-		public void enc_wolfSSL_set_using_nonblock([user_check]WOLFSSL* ssl, int i);
-		public int enc_wolfSSL_set_fd([user_check]WOLFSSL* ssl, int fd);
 		public int enc_wolfSSL_connect([user_check]WOLFSSL* ssl);
 		public int enc_wolfSSL_write([user_check]WOLFSSL* ssl,
 									 [in, size=sz] const void* in,
 									 int sz);
 		public int enc_wolfSSL_get_error([user_check]WOLFSSL* ssl,
 										 int ret);
-		public int enc_wolfSSL_is_init_finished([user_check]WOLFSSL* ssl);
 		public int enc_mutex_init(void);
 		public int enc_mutex_destroy(void);
-		public int enc_wolfSSL_read_from_client([user_check]WOLFSSL* ssl, int connd);
-		public int enc_wolfSSL_write_to_client([user_check]WOLFSSL* ssl, int connd);
+		public int enc_wolfSSL_read_from_client(int connd);
+		public int enc_wolfSSL_write_to_client(int connd);
 		public int enc_wolfSSL_read([user_check]WOLFSSL* ssl);
 		public int enc_wolfSSL_process_query(int tid);
 		public void enc_wolfSSL_free([user_check]WOLFSSL* ssl);
