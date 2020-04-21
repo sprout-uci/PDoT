@@ -149,7 +149,7 @@ void* ClientReader(void* args)
     //         pthread_exit(NULL);
     // }
 
-    sgxStatus = enc_wolfSSL_read_from_client(pkg->sgx_id, &ret, pkg->t_count);
+    sgxStatus = enc_wolfSSL_read_from_client(pkg->sgx_id, &ret, ctx, pkg->t_count);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
         printf("Server failed to read from client %d\n", pkg->t_count);
         pkg->open = 1;
@@ -213,11 +213,14 @@ int server_connect(sgx_enclave_id_t id)
     int queryIdx;
 
     struct ClientQueue *client_queue = (struct ClientQueue *)malloc(sizeof(struct ClientQueue));
-    client_queue->head == NULL;
-    client_queue->tail == NULL;
+    memset(client_queue, 0, sizeof(struct ClientQueue));
 
     /* Initialize wolfSSL */
     sgxStatus = enc_wolfSSL_Init(id, &ret, client_queue);
+    if (sgxStatus != SGX_SUCCESS) {
+        printf("wolfSSL_Init failure\n");
+        return EXIT_FAILURE;
+    }
 
     if (0 != init_resconf()) {
         printf("init_resconf failure\n");
@@ -288,10 +291,6 @@ int server_connect(sgx_enclave_id_t id)
     /* Create key and certificate within the enclave */
     sgxStatus = enc_create_key_and_x509(id, ctx);
     assert(sgxStatus == SGX_SUCCESS);
-
-    /* Create WOLFSSL objects within the enclave */
-    sgxStatus = enc_create_ssls(id, ctx);
-    assert(sgxStatus == SGX_SUCCESS);
     
     /* Initialize the server address struct with zeros */
     memset(&servAddr, 0, sizeof(servAddr));
@@ -357,16 +356,19 @@ int server_connect(sgx_enclave_id_t id)
         }
         
         if (connd > 0) {
+            printf("Received request from client.\n");
             struct ClientQueueEntry *cqe = (struct ClientQueueEntry *)malloc(sizeof(struct ClientQueueEntry));
+            memset(cqe, 0, sizeof(struct ClientQueueEntry));
             cqe->connd = connd;
             if (client_queue->head == NULL && client_queue->tail == NULL) {
-                client_queue->head = cqe;
-                client_queue->tail = cqe;
+                printf("Adding first entry to client_queue.\n");
+                client_queue->head = client_queue->tail = cqe;
             } else if (client_queue->head == NULL || client_queue->tail == NULL) {
                 // Something is wrong.
                 printf("Failed to add entry to client_queue.\n");
                 continue;
             } else {
+                printf("Adding additional entry to client_queue.\n");
                 client_queue->tail->next = cqe;
                 client_queue->tail = cqe;
             }
