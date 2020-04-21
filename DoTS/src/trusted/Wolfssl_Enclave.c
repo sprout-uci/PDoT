@@ -11,10 +11,10 @@
 #include "dns.h"
 #include <ctype.h>
 
+#include "common.h"
+
 #define TLS_BUFFER_SIZE 514
-#define DEBUG_DOTS 0
-#define OUT_QUERY_LISTS 60
-#define QUERY_HANDLE_THREADS 30
+#define DEBUG_DOTS 1
 
 struct Query {
     char qname[DNS_D_MAXNAME + 1];
@@ -49,7 +49,7 @@ struct QueryHandlerCleanup {
 
 // Creat QueryList to store incoming requests and outgoing responses
 struct InQueryList *inQueryList;
-struct OutQueryList *outQueryLists[OUT_QUERY_LISTS];
+struct OutQueryList *outQueryLists[MAX_CONCURRENT_THREADS];
 struct QueryHandlerCleanup *cleanupSet[QUERY_HANDLE_THREADS];
 
 struct dns_resolv_conf *resconf;
@@ -288,8 +288,10 @@ void enc_wolfSSL_Debugging_OFF(void)
 int enc_wolfSSL_Init(void)
 {
     inQueryList = (struct QueryList *) malloc(sizeof(struct InQueryList));
-    for (int i=0; i < OUT_QUERY_LISTS; i++) {
+    memset(inQueryList, 0, sizeof(struct InQueryList));
+    for (int i=0; i < MAX_CONCURRENT_THREADS; i++) {
         outQueryLists[i] = (struct QueryList *) malloc(sizeof(struct OutQueryList));
+        memset(outQueryLists[i], 0, sizeof(struct OutQueryList));
         outQueryLists[i]->head = NULL;
         outQueryLists[i]->tail = NULL;
         outQueryLists[i]->reader_writer_sig = 1;
@@ -298,6 +300,7 @@ int enc_wolfSSL_Init(void)
     inQueryList->tail = NULL;
     for (int i=0; i < QUERY_HANDLE_THREADS; i++) {
         cleanupSet[i] = (struct QueryHandlerCleanup *) malloc(sizeof(struct QueryHandlerCleanup));
+        memset(cleanupSet[i], 0, sizeof(struct QueryHandlerCleanup));
         cleanupSet[i]->query_processer_sig = 1;
         cleanupSet[i]->cleanup_finished = 0;
     }
@@ -427,7 +430,7 @@ int enc_mutex_init(void)
         eprintf("Failed to initialize mutex\n");
         return -1;
     }
-    for (int i=0; i < OUT_QUERY_LISTS; i++) {
+    for (int i=0; i < MAX_CONCURRENT_THREADS; i++) {
         outQueryLists[i]->out_mutex = (sgx_thread_mutex_t *) malloc(sizeof(sgx_thread_mutex_t));
         if (sgx_thread_mutex_init(outQueryLists[i]->out_mutex, NULL) != 0) {
                 eprintf("Failed to initialize mutex\n");
@@ -443,7 +446,7 @@ int enc_mutex_destroy(void)
         eprintf("Failed to destroy in_mutex\n");
         // return -1;
     }
-    for (int i=0; i < OUT_QUERY_LISTS; i++) {
+    for (int i=0; i < MAX_CONCURRENT_THREADS; i++) {
         if (sgx_thread_mutex_destroy(outQueryLists[i]->out_mutex) != 0 ) {
                 eprintf("Failed to destroy out_mutex[%i]\n", i);
                 // return -1;
@@ -481,6 +484,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL* ssl, int connd)
 
             // Prepare QueryBuffer
             struct QueryBuffer *queryBuffer = (struct QueryBuffer *) malloc(sizeof(struct QueryBuffer));
+            memset(queryBuffer, 0, sizeof(struct QueryBuffer));
             queryBuffer->buffer = buffer;
             queryBuffer->connd = connd;
             // queryBuffer->time = current_time();
@@ -564,8 +568,10 @@ int enc_wolfSSL_process_query(int tid)
 
         // Initialize resconf and hosts
         struct dns_packet *ans = (struct dns_packet *) malloc(sizeof(struct dns_packet));
+        memset(ans, 0, sizeof(struct dns_packet));
         struct QueryBuffer* qB = inQueryList->head;
         struct Query* query = (struct Query *) malloc(sizeof(struct Query));
+        memset(query, 0, sizeof(struct Query));
         int ret = 0;
 
         // Update head and tail
@@ -638,6 +644,7 @@ int enc_wolfSSL_process_query(int tid)
 
         // Prepare QueryBuffer
         struct QueryBuffer *queryBuffer = (struct QueryBuffer *) malloc(sizeof(struct QueryBuffer));
+        memset(queryBuffer, 0, sizeof(struct QueryBuffer));
         queryBuffer->buffer = (char *)ans;
         queryBuffer->connd = qB->connd;
         // queryBuffer->time = 0;
@@ -749,6 +756,7 @@ int enc_wolfSSL_write_to_client(WOLFSSL* ssl, int connd)
             // Create answer
             struct dns_packet* ans = (struct dns_packet *)qB->buffer;
             char* answer = malloc(ans->end + (size_t)2);
+            memset(answer, 0, ans->end + (size_t)2);
             answer[0] = 0xff & (ans->end >> 8);
             answer[1] = 0xff & (ans->end >> 0);
             ans->header.ra = 1;
@@ -824,7 +832,7 @@ int enc_wolfSSL_Cleanup(void)
     }
     counter = 0;
     printf("clean outQueryList\n");
-    for (int i = 0; i < OUT_QUERY_LISTS; i++) {
+    for (int i = 0; i < MAX_CONCURRENT_THREADS; i++) {
         while(outQueryLists[i]->head != NULL && sgx_thread_mutex_trylock(outQueryLists[i]->out_mutex) == 0) {
             struct QueryBuffer* tmp = outQueryLists[i]->head;
             outQueryLists[i]->head = tmp->next;
@@ -834,7 +842,7 @@ int enc_wolfSSL_Cleanup(void)
         }
     }
     free(inQueryList);
-    for (int i = 0; i < OUT_QUERY_LISTS; i++) {
+    for (int i = 0; i < MAX_CONCURRENT_THREADS; i++) {
         free(outQueryLists[i]);
     }
     free(resconf);

@@ -46,12 +46,11 @@
 /* threads */
 #include <pthread.h>
 
+#include "common.h"
+
 #define DEFAULT_PORT 11111
 
 #define CIPHER_LIST "ECDHE-ECDSA-AES128-GCM-SHA256"
-
-#define MAX_CONCURRENT_THREADS 60
-#define QUERY_HANDLE_THREADS 30
 
 #define F_SETFL 4
 #define O_NONBLOCK 04000
@@ -319,7 +318,7 @@ int server_connect(sgx_enclave_id_t id)
 
 
     /* initialise thread array */
-    for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS; ++clientIdx) {
+    for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS; clientIdx++) {
         clientThread[clientIdx].open = 1;
         clientThread[clientIdx].num = clientIdx;
     }
@@ -339,7 +338,7 @@ int server_connect(sgx_enclave_id_t id)
 
         signal(SIGINT, intHandler);
 
-        for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS && !clientThread[clientIdx].open; ++clientIdx);
+        for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS && !clientThread[clientIdx].open; clientIdx++);
         if (clientIdx == MAX_CONCURRENT_THREADS) {
             printf("Exceeded max number of threads!\n");
             continue;
