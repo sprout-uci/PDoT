@@ -144,7 +144,7 @@ void* ClientReader(void* args)
     int               sgxStatus;
     int               ret;
 
-    sgxStatus = enc_wolfSSL_read_from_client(pkg->sgx_id, &ret, ctx, pkg->connd);
+    sgxStatus = enc_wolfSSL_read_from_client(pkg->sgx_id, &ret, ctx, pkg->connd, pkg->t_count);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
         printf("Server failed to read from client %d\n", pkg->connd);
         pkg->open = 1;
@@ -163,7 +163,7 @@ void* ClientWriter(void* args)
     int               sgxStatus;
     int               ret;
 
-    sgxStatus = enc_wolfSSL_write_to_client(pkg->sgx_id, &ret, pkg->connd);
+    sgxStatus = enc_wolfSSL_write_to_client(pkg->sgx_id, &ret, pkg->t_count);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
         printf("Server failed to write to client %d\n", pkg->connd);
     }
