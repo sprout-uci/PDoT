@@ -22,7 +22,6 @@
 
 #include "stdafx.h"
 #include "App.h" /* contains include of Enclave_u.h which has wolfSSL header files */
-#include "client-tls.h"
 #include "server-tls.h"
 #include "time.h"
 
@@ -54,7 +53,6 @@ int main(int argc, char* argv[]) /* not using since just testing w/ wc_test */
 	/* only print off if no command line arguments were passed in */
 	if (argc != 2 || strlen(argv[1]) != 2) {
 		printf("Usage:\n"
-               "\t-c Run a TLS client in enclave\n"
                "\t-s Run a TLS server in enclave\n"
 #ifdef HAVE_WOLFSSL_TEST
                "\t-t Run wolfCrypt tests only \n"
@@ -78,11 +76,6 @@ int main(int argc, char* argv[]) /* not using since just testing w/ wc_test */
 
 
     switch(argv[1][1]) {
-        case 'c':
-            printf("Client Test:\n");
-            client_connect(id);
-            break;
-
         case 's':
             printf("Server Test:\n");
             server_connect(id);

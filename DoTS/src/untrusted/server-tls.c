@@ -77,11 +77,9 @@ struct ctarg_pkg {
     int       open;
     pthread_t rtid;
     pthread_t wtid;
-    int       num;
-    int       connd;
     int       sgx_id;
+    int       connd;
     int       t_count;
-    WOLFSSL*  ssl;
 };
 
 static volatile int shutdwn = 0;
@@ -146,18 +144,9 @@ void* ClientReader(void* args)
     int               sgxStatus;
     int               ret;
 
-    /* Attach wolfSSL to the socket */
-        sgxStatus = enc_wolfSSL_set_fd(pkg->sgx_id, &ret, pkg->ssl, pkg->connd);
-        if (sgxStatus != SGX_SUCCESS || ret != SSL_SUCCESS) {
-            printf("Client %d, connd %i: wolfSSL_set_fd failure\n", pkg->num, pkg->connd);
-            pkg->open = 1;
-            pthread_exit(NULL);
-    }
-
-    sgxStatus = enc_wolfSSL_read_from_client(pkg->sgx_id, &ret, pkg->ssl, pkg->connd);
+    sgxStatus = enc_wolfSSL_read_from_client(pkg->sgx_id, &ret, ctx, pkg->connd);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
-        printf("Server failed to read from client %d, connd %i\n", pkg->num, pkg->connd);
-        close(pkg->connd);           /* Close the connection to the client   */
+        printf("Server failed to read from client %d\n", pkg->connd);
         pkg->open = 1;
         pthread_exit(NULL);
     }
@@ -174,9 +163,9 @@ void* ClientWriter(void* args)
     int               sgxStatus;
     int               ret;
 
-    sgxStatus = enc_wolfSSL_write_to_client(pkg->sgx_id, &ret, pkg->ssl, pkg->connd);
+    sgxStatus = enc_wolfSSL_write_to_client(pkg->sgx_id, &ret, pkg->connd);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
-        printf("Server failed to write to client %d, connd %i\n", pkg->num, pkg->connd);
+        printf("Server failed to write to client %d\n", pkg->connd);
     }
 
     /* Cleanup after this connection */
@@ -320,7 +309,7 @@ int server_connect(sgx_enclave_id_t id)
     /* initialise thread array */
     for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS; clientIdx++) {
         clientThread[clientIdx].open = 1;
-        clientThread[clientIdx].num = clientIdx;
+        clientThread[clientIdx].t_count = clientIdx;
     }
 
     for (int i = 0; i < QUERY_HANDLE_THREADS; i++) {
@@ -351,31 +340,10 @@ int server_connect(sgx_enclave_id_t id)
         }
         
         if (connd > 0) {
-            WOLFSSL* ssl;
-            sgxStatus = enc_wolfSSL_new(id, &ssl, ctx);
-            if (sgxStatus != SGX_SUCCESS || ssl == NULL) {
-                printf("Client %d, connd %i: wolfSSL_new failure\n", clientIdx, connd);
-                close(connd);           /* Close the connection to the client   */
-                continue;
-            }
-            sgxStatus = enc_wolfSSL_set_using_nonblock(id, ssl, 1);
-            if (sgxStatus != SGX_SUCCESS) {
-                printf("Client %d, connd %i: wolfSSL_set_using_nonblock failure\n", clientIdx, connd);
-                close(connd);           /* Close the connection to the client   */
-                continue;
-            }
-            sgxStatus = enc_wolfSSL_is_init_finished(id, &ret, ssl);
-            if (sgxStatus != SGX_SUCCESS || ret == 1) {
-                printf("Client %d, connd %i: wolfSSL_is_init_finished failure\n", clientIdx, connd);
-                close(connd);           /* Close the connection to the client   */
-                continue;
-            }
-
             /* Fill out the relevent thread argument package information */
             clientThread[clientIdx].open = 0;
             clientThread[clientIdx].connd = connd;
             clientThread[clientIdx].sgx_id = id;
-            clientThread[clientIdx].ssl = ssl;
 
             /* Launch a reader thread to deal with the new client */
             pthread_create(&clientThread[clientIdx].rtid, NULL, ClientReader, &clientThread[clientIdx]);

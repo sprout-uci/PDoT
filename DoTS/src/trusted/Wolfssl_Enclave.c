@@ -27,6 +27,7 @@ struct QueryBuffer {
     char *buffer;
     int connd;
     double time;
+    WOLFSSL* ssl;
     struct QueryBuffer *next;
 };
 
@@ -455,9 +456,9 @@ int enc_mutex_destroy(void)
     return 0;
 }
 
-int enc_wolfSSL_read_from_client(WOLFSSL* ssl, int connd)
+int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd)
 {
-    if(sgx_is_within_enclave(ssl, wolfSSL_GetObjectSize()) != 1)
+    if(sgx_is_within_enclave(ctx, wolfSSL_CTX_GetObjectSize()) != 1)
         abort();
 
     int ret = 0;
@@ -470,6 +471,34 @@ int enc_wolfSSL_read_from_client(WOLFSSL* ssl, int connd)
         /////////////////////////
         // READ CLIENT REQUEST //
         /////////////////////////
+
+        // Create new WOLFSSL object
+        printf("[ClientReader %i] Create WOLFSSL object.\n", connd);
+        WOLFSSL* ssl = wolfSSL_new(ctx);
+        if (ssl == NULL) {
+            eprintf("[ClientReader %i] Failed to create new WOLFSSL object.\n", connd);
+            ret = -1;
+            break;
+        }
+        // Set SSL socket to nonblock
+        printf("[ClientReader %i] Set SSL to nonblock.\n", connd);
+        wolfSSL_set_using_nonblock(ssl, 1);
+        // Check whether the initialization is finished
+        printf("[ClientReader %i] Check whether init is finished.\n", connd);
+        ret = wolfSSL_is_init_finished(ssl);
+        if (ret == 1) {
+            eprintf("[ClientReader %i] Failed to initialize WOLFSSL object.\n", connd);
+            ret = -1;
+            break;
+        }
+        // Set FD
+        printf("[ClientReader %i] Set FD to WOLFSSL object.\n", connd);
+        ret = wolfSSL_set_fd(ssl, connd);
+        if (ret != SSL_SUCCESS) {
+            eprintf("[ClientReader %i] Failed to set FD to WOLFSSL object.\n", connd);
+            ret = -1;
+            break;
+        }
 
         /* Read the client data into our buff array */
         if (wolfSSL_read(ssl, ssl_buffer, TLS_BUFFER_SIZE) > 0) {
@@ -487,7 +516,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL* ssl, int connd)
             memset(queryBuffer, 0, sizeof(struct QueryBuffer));
             queryBuffer->buffer = buffer;
             queryBuffer->connd = connd;
-            // queryBuffer->time = current_time();
+            queryBuffer->ssl = ssl;
             queryBuffer->next = NULL;
 
             // Wait until we can lock mutex
@@ -647,7 +676,7 @@ int enc_wolfSSL_process_query(int tid)
         memset(queryBuffer, 0, sizeof(struct QueryBuffer));
         queryBuffer->buffer = (char *)ans;
         queryBuffer->connd = qB->connd;
-        // queryBuffer->time = 0;
+        queryBuffer->ssl = qB->ssl;
         queryBuffer->next = NULL;
 
         // Wait until we can lock mutex
@@ -718,11 +747,8 @@ int enc_wolfSSL_process_query(int tid)
     }
 }
 
-int enc_wolfSSL_write_to_client(WOLFSSL* ssl, int connd)
+int enc_wolfSSL_write_to_client(int connd)
 {
-    if(sgx_is_within_enclave(ssl, wolfSSL_GetObjectSize()) != 1)
-        abort();
-
     // Initialize some variables
     int ret = 0;
     outQueryLists[connd]->reader_writer_sig = 1;
@@ -765,7 +791,7 @@ int enc_wolfSSL_write_to_client(WOLFSSL* ssl, int connd)
 
             /* Send answer back to client */
             printf("[ClientWriter %i] send answer with qid: %u\n", connd, ans->header.qid);
-            ret = wolfSSL_write(ssl, answer, ans->end + (size_t)2);
+            ret = wolfSSL_write(qB->ssl, answer, ans->end + (size_t)2);
             if (ret != (ans->end + (size_t)2)) {
                 eprintf("[ClientWriter %i] ERROR: failed to write. Ret: %i\n", connd, ret);
             }
@@ -783,6 +809,7 @@ int enc_wolfSSL_write_to_client(WOLFSSL* ssl, int connd)
             printf("[ClientWriter %i] clean up\n", connd);
             free(answer);
             free(qB->buffer);
+            wolfSSL_free(qB->ssl);
             free(qB);
         } else {
             if (sgx_thread_mutex_unlock(outQueryLists[connd]->out_mutex) != 0) {
@@ -796,7 +823,6 @@ int enc_wolfSSL_write_to_client(WOLFSSL* ssl, int connd)
     }
 
     printf("[ClientWriter %i] Free up some stuff\n", connd);
-    wolfSSL_free(ssl);
     return 0;
 }
 
