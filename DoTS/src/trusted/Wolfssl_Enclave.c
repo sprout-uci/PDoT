@@ -370,38 +370,35 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
     char *ssl_buffer = malloc(TLS_BUFFER_SIZE);
     memset(ssl_buffer, 0 , TLS_BUFFER_SIZE);
 
+    // Create new WOLFSSL object
+    printf("[ClientReader %i] Create WOLFSSL object.\n", idx);
+    WOLFSSL* ssl = wolfSSL_new(ctx);
+    if (ssl == NULL) {
+        eprintf("[ClientReader %i] Failed to create new WOLFSSL object.\n", idx);
+        return -1;
+    }
+    // Set SSL socket to nonblock
+    printf("[ClientReader %i] Set SSL to nonblock.\n", idx);
+    wolfSSL_set_using_nonblock(ssl, 1);
+    // Check whether the initialization is finished
+    printf("[ClientReader %i] Check whether init is finished.\n", idx);
+    ret = wolfSSL_is_init_finished(ssl);
+    if (ret == 1) {
+        eprintf("[ClientReader %i] Failed to initialize WOLFSSL object.\n", idx);
+        return ret;
+    }
+    // Set FD
+    printf("[ClientReader %i] Set FD to WOLFSSL object.\n", idx);
+    ret = wolfSSL_set_fd(ssl, connd);
+    if (ret != SSL_SUCCESS) {
+        eprintf("[ClientReader %i] Failed to set FD to WOLFSSL object.\n", idx);
+        return ret;
+    }
+
     while (1) {
         /////////////////////////
         // READ CLIENT REQUEST //
         /////////////////////////
-
-        // Create new WOLFSSL object
-        printf("[ClientReader %i] Create WOLFSSL object.\n", idx);
-        WOLFSSL* ssl = wolfSSL_new(ctx);
-        if (ssl == NULL) {
-            eprintf("[ClientReader %i] Failed to create new WOLFSSL object.\n", idx);
-            ret = -1;
-            break;
-        }
-        // Set SSL socket to nonblock
-        printf("[ClientReader %i] Set SSL to nonblock.\n", idx);
-        wolfSSL_set_using_nonblock(ssl, 1);
-        // Check whether the initialization is finished
-        printf("[ClientReader %i] Check whether init is finished.\n", idx);
-        ret = wolfSSL_is_init_finished(ssl);
-        if (ret == 1) {
-            eprintf("[ClientReader %i] Failed to initialize WOLFSSL object.\n", idx);
-            ret = -1;
-            break;
-        }
-        // Set FD
-        printf("[ClientReader %i] Set FD to WOLFSSL object.\n", idx);
-        ret = wolfSSL_set_fd(ssl, connd);
-        if (ret != SSL_SUCCESS) {
-            eprintf("[ClientReader %i] Failed to set FD to WOLFSSL object.\n", idx);
-            ret = -1;
-            break;
-        }
 
         /* Read the client data into our buff array */
         if (wolfSSL_read(ssl, ssl_buffer, TLS_BUFFER_SIZE) > 0) {
@@ -466,6 +463,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
 
     printf("[ClientReader %i] Free up some stuff\n", idx);
     free(ssl_buffer);
+    if (ssl) wolfSSL_free(ssl);
 
     return 0;
 }
@@ -654,6 +652,7 @@ int enc_wolfSSL_write_to_client(int idx)
     // Initialize some variables
     int ret = 0;
     outQueryLists[idx]->reader_writer_sig = 1;
+    WOLFSSL* ssl = NULL;
 
     while (1) {
         /////////////////////////////
@@ -711,7 +710,6 @@ int enc_wolfSSL_write_to_client(int idx)
             printf("[ClientWriter %i] clean up\n", idx);
             free(answer);
             free(qB->buffer);
-            wolfSSL_free(qB->ssl);
             free(qB);
         } else {
             if (sgx_thread_mutex_unlock(outQueryLists[idx]->out_mutex) != 0) {
