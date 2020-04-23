@@ -11,77 +11,47 @@ enclave {
 
     from "ra_tls.edl" import *;
     from "sgx_tstdc.edl" import *;
+	from "sgx_tswitchless.edl" import *;
 
     trusted {
-        public int wc_test([user_check]void* args);
-        public int wc_benchmark_test([user_check]void* args);
-
 		public int enc_wolfSSL_Init(void);
 		public void enc_wolfSSL_Debugging_ON(void);
 		public void enc_wolfSSL_Debugging_OFF(void);
-		public WOLFSSL_METHOD* enc_wolfTLSv1_2_client_method(void);
 		public WOLFSSL_METHOD* enc_wolfTLSv1_2_server_method(void);
 		public WOLFSSL_CTX* enc_wolfSSL_CTX_new([user_check] WOLFSSL_METHOD* method);
-        public int enc_wolfSSL_CTX_use_PrivateKey_buffer([user_check] WOLFSSL_CTX* ctx,
-												[in, size=sz] const unsigned char* buf,
-												long sz,
-												int type);
-        public int enc_wolfSSL_CTX_load_verify_buffer([user_check] WOLFSSL_CTX* ctx,
-												[in, size=sz] const unsigned char* buf,
-												long sz,
-												int type);
-        public int enc_wolfSSL_CTX_use_certificate_chain_buffer_format([user_check] WOLFSSL_CTX* ctx,
-												[in, size=sz] const unsigned char* buf,
-												long sz,
-												int type);
-        public int enc_wolfSSL_CTX_use_certificate_buffer([user_check] WOLFSSL_CTX* ctx,
-												[in, size=sz] const unsigned char* buf,
-												long sz,
-												int type);
-        public int enc_wolfSSL_CTX_set_cipher_list([user_check] WOLFSSL_CTX* ctx,
-												[in, string] const char* list);
-		public int enc_wolfSSL_connect([user_check]WOLFSSL* ssl);
-		public int enc_wolfSSL_write([user_check]WOLFSSL* ssl,
-									 [in, size=sz] const void* in,
-									 int sz);
-		public int enc_wolfSSL_get_error([user_check]WOLFSSL* ssl,
-										 int ret);
 		public int enc_wolfSSL_is_init_finished([user_check]WOLFSSL* ssl);
 		public int enc_mutex_init(void);
 		public int enc_mutex_destroy(void);
-		public int enc_wolfSSL_read_from_client([user_check]WOLFSSL_CTX* ctx, int connd, int idx);
-		public int enc_wolfSSL_write_to_client(int idx);
-		public int enc_wolfSSL_read([user_check]WOLFSSL* ssl);
-		public int enc_wolfSSL_process_query(int tid);
+		public int enc_wolfSSL_read_from_client([user_check]WOLFSSL_CTX* ctx, int connd, int idx) transition_using_threads;
+		public int enc_wolfSSL_write_to_client(int idx) transition_using_threads;
+		public int enc_wolfSSL_process_query(int tid) transition_using_threads;
 		public void enc_wolfSSL_free([user_check]WOLFSSL* ssl);
 		public void enc_wolfSSL_CTX_free([user_check]WOLFSSL_CTX* ctx);
 		public int enc_wolfSSL_Cleanup(void);
-
 		public void enc_load_resconf([user_check]struct dns_resolv_conf *resconf);
 		public void enc_load_hosts([user_check]struct dns_hosts *hosts);
 		public void enc_load_hints([user_check]struct dns_hints *hints);
-
-    public void enc_create_key_and_x509([user_check]WOLFSSL_CTX* ctx);
+    	public void enc_create_key_and_x509([user_check]WOLFSSL_CTX* ctx);
     };
 
     untrusted {
         /* define OCALLs here. */
         void ocall_print_string([in, string] const char* str);
-        time_t ocall_time([out] time_t* time);
+        time_t ocall_time([out] time_t* time); // dns_t
         void ocall_current_time([out] double* time);
         void ocall_low_res_time([out] int* time);
-        size_t ocall_recv(int sockfd, [out, size=len] void *buf, size_t len, int flags) propagate_errno;
-        size_t ocall_send(int sockfd, [in, size=len] const void *buf, size_t len, int flags) propagate_errno;
-		int ocall_connect(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len);
-        size_t ocall_close(int sockfd) propagate_errno;
-        int ocall_socket(int __domain, int __type, int __protocol) propagate_errno;
-        int ocall_bind(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len) propagate_errno;
-		int ocall_gethostname([in, size=__len]char *__name, size_t __len);
-		int ocall_getpeername(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len);
-		int ocall_random();
+        size_t ocall_recv(int sockfd, [out, size=len] void *buf, size_t len, int flags) propagate_errno; // dns_t
+        size_t ocall_send(int sockfd, [in, size=len] const void *buf, size_t len, int flags) propagate_errno; // dns_t
+		int ocall_connect(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len); // dns_t
+        size_t ocall_close(int sockfd) propagate_errno; // dns_t
+        int ocall_socket(int __domain, int __type, int __protocol) propagate_errno; // dns_t
+        int ocall_bind(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len) propagate_errno; // dns_t
+		int ocall_gethostname([in, size=__len]char *__name, size_t __len); // dns_t
+		int ocall_getpeername(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len); // dns_t
+		int ocall_random(); // dns_t
 		int ocall_select(int __nfds, [in, size=1024]fd_set *__readfds,
 						 [in, size=1024]fd_set *__writefds,
 						 [in, size=1024]fd_set *__exceptfds,
-						 [in, size=__len]struct timeval *__timeout, size_t __len);
+						 [in, size=__len]struct timeval *__timeout, size_t __len); // dns_t
     };
 };

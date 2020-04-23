@@ -24,6 +24,8 @@
 #include "App.h" /* contains include of Enclave_u.h which has wolfSSL header files */
 #include "server-tls.h"
 #include "time.h"
+#include <sgx_uswitchless.h>
+#include <common.h>
 
 /* Use Debug SGX ? */
 #if _DEBUG
@@ -54,21 +56,22 @@ int main(int argc, char* argv[]) /* not using since just testing w/ wc_test */
 	if (argc != 2 || strlen(argv[1]) != 2) {
 		printf("Usage:\n"
                "\t-s Run a TLS server in enclave\n"
-#ifdef HAVE_WOLFSSL_TEST
-               "\t-t Run wolfCrypt tests only \n"
-#endif /* HAVE_WOLFSSL_TEST */
-
-#ifdef HAVE_WOLFSSL_BENCHMARK
-               "\t-b Run wolfCrypt benchmarks in enclave\n"
-#endif /* HAVE_WOLFSSL_BENCHMARK */
                );
         return 0;
 	}
 
+    // Config for Switchless SGX
+    sgx_uswitchless_config_t us_config = SGX_USWITCHLESS_CONFIG_INITIALIZER;
+    us_config.num_uworkers = MAX_CONCURRENT_THREADS;
+    us_config.num_tworkers = MAX_CONCURRENT_THREADS;
+    us_config.switchless_calls_pool_size_qwords = 1;
+    const char* enclave_ex_p[32] = { 0 };
+    enclave_ex_p[SGX_CREATE_ENCLAVE_EX_SWITCHLESS_BIT_IDX] = (const char*)&us_config;
+
     memset(t, 0, sizeof(sgx_launch_token_t));
     memset(&args,0,sizeof(args));
 
-	ret = sgx_create_enclave(ENCLAVE_FILENAME, DEBUG_VALUE, &t, &updated, &id, NULL);
+	ret = sgx_create_enclave_ex(ENCLAVE_FILENAME, DEBUG_VALUE, &t, &updated, &id, NULL, SGX_CREATE_ENCLAVE_EX_SWITCHLESS, enclave_ex_p);
 	if (ret != SGX_SUCCESS) {
 		printf("Failed to create Enclave : error %d - %#x.\n", ret, ret);
 		return 1;
