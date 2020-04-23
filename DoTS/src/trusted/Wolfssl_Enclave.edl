@@ -37,21 +37,22 @@ enclave {
     untrusted {
         /* define OCALLs here. */
         void ocall_print_string([in, string] const char* str);
-        time_t ocall_time([out] time_t* time); // dns_t
+        time_t ocall_time([out] time_t* time) transition_using_threads; // dns_t
         void ocall_current_time([out] double* time);
         void ocall_low_res_time([out] int* time);
-        size_t ocall_recv(int sockfd, [out, size=len] void *buf, size_t len, int flags) propagate_errno; // dns_t
-        size_t ocall_send(int sockfd, [in, size=len] const void *buf, size_t len, int flags) propagate_errno; // dns_t
-		int ocall_connect(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len); // dns_t
-        size_t ocall_close(int sockfd) propagate_errno; // dns_t
-        int ocall_socket(int __domain, int __type, int __protocol) propagate_errno; // dns_t
-        int ocall_bind(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len) propagate_errno; // dns_t
-		int ocall_gethostname([in, size=__len]char *__name, size_t __len); // dns_t
-		int ocall_getpeername(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len); // dns_t
+        size_t ocall_recv(int sockfd, [out, size=len] void *buf, size_t len, int flags) propagate_errno transition_using_threads; // dns_t
+        size_t ocall_send(int sockfd, [in, size=len] const void *buf, size_t len, int flags) propagate_errno transition_using_threads; // dns_t
+		int ocall_connect(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len) transition_using_threads; // dns_t
+        size_t ocall_close(int sockfd) propagate_errno transition_using_threads; // dns_t
+        int ocall_socket(int __domain, int __type, int __protocol) propagate_errno transition_using_threads; // dns_t
+        int ocall_bind(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len) propagate_errno transition_using_threads; // dns_t
+		int ocall_gethostname([in, size=__len]char *__name, size_t __len) transition_using_threads; // dns_t
+		int ocall_getpeername(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len) transition_using_threads; // dns_t
 		int ocall_random(); // dns_t
 		int ocall_select(int __nfds, [in, size=1024]fd_set *__readfds,
 						 [in, size=1024]fd_set *__writefds,
 						 [in, size=1024]fd_set *__exceptfds,
-						 [in, size=__len]struct timeval *__timeout, size_t __len); // dns_t
+						 [in, size=__len]struct timeval *__timeout, size_t __len)
+						  transition_using_threads; // dns_t
     };
 };
