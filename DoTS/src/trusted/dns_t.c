@@ -5838,34 +5838,34 @@ struct dns_hints *dns_hints_mortal(struct dns_hints *hints) {
 } /* dns_hints_mortal() */
 
 
-// struct dns_hints *dns_hints_local(struct dns_resolv_conf *resconf, int *error_) {
-// 	struct dns_hints *hints		= 0;
-// 	int error;
+struct dns_hints *dns_hints_local(struct dns_resolv_conf *resconf, int *error_) {
+	struct dns_hints *hints		= 0;
+	int error;
 
-// 	if (resconf)
-// 		dns_resconf_acquire(resconf);
-// 	else if (!(resconf = dns_resconf_local(&error)))
-// 		goto error;
+	if (resconf)
+		dns_resconf_acquire(resconf);
+	// else if (!(resconf = dns_resconf_local(&error)))
+	// 	goto error;
 
-// 	if (!(hints = dns_hints_open(resconf, &error)))
-// 		goto error;
+	if (!(hints = dns_hints_open(resconf, &error)))
+		goto error;
 
-// 	error	= 0;
+	error	= 0;
 
-// 	if (0 == dns_hints_insert_resconf(hints, ".", resconf, &error) && error)
-// 		goto error;
+	if (0 == dns_hints_insert_resconf(hints, ".", resconf, &error) && error)
+		goto error;
 
-// 	dns_resconf_close(resconf);
+	dns_resconf_close(resconf);
 
-// 	return hints;
-// error:
-// 	*error_	= error;
+	return hints;
+error:
+	*error_	= error;
 
-// 	dns_resconf_close(resconf);
-// 	dns_hints_close(hints);
+	dns_resconf_close(resconf);
+	dns_hints_close(hints);
 
-// 	return 0;
-// } /* dns_hints_local() */
+	return 0;
+} /* dns_hints_local() */
 
 
 struct dns_hints *dns_hints_root(struct dns_resolv_conf *resconf, int *error_) {
@@ -6890,7 +6890,6 @@ retry:
 
 		so->state++;
 	case DNS_SO_TCP_INIT:
-		printf("tcp init\n");
 		if (dns_so_tcp_keep(so)) {
 			so->state = DNS_SO_TCP_SEND;
 
@@ -7814,7 +7813,6 @@ exec:
 		if (dns_so_elapsed(&R->so) >= dns_resconf_timeout(R->resconf))
 			dgoto(R->sp, DNS_R_FOREACH_A);
 
-		// Error occured at dns_so_check
 		if ((error = dns_so_check(&R->so)))
 			goto error;
 

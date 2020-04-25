@@ -143,6 +143,8 @@ struct dns_packet *resolve_query(_Bool recurse, struct Query* query) {
     }
 
 	resconf->options.recurse = recurse;
+    // Disable TCP during measurement to lower the variation in latency
+	resconf->options.tcp = DNS_RESCONF_TCP_DISABLE;
 
 	if (!(R = dns_res_open(resconf, hosts, dns_hints_mortal(hints), NULL, dns_opts(), &error))) {
         eprintf("dns_res_open: %s, %s\n", qname, dns_strerror(error));
