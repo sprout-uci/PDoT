@@ -6890,6 +6890,7 @@ retry:
 
 		so->state++;
 	case DNS_SO_TCP_INIT:
+		printf("tcp init\n");
 		if (dns_so_tcp_keep(so)) {
 			so->state = DNS_SO_TCP_SEND;
 
@@ -6904,7 +6905,7 @@ retry:
 
 		so->state++;
 	case DNS_SO_TCP_CONN:
-		sgxStatus = ocall_connect(&ret, so->udp, (struct sockaddr *)&so->remote, dns_sa_len(&so->remote));
+		sgxStatus = ocall_connect(&ret, so->tcp, (struct sockaddr *)&so->remote, dns_sa_len(&so->remote));
 		if (0 != ret) {
 			if (dns_soerr() != DNS_EISCONN)
 				goto soerr;
@@ -7813,6 +7814,7 @@ exec:
 		if (dns_so_elapsed(&R->so) >= dns_resconf_timeout(R->resconf))
 			dgoto(R->sp, DNS_R_FOREACH_A);
 
+		// Error occured at dns_so_check
 		if ((error = dns_so_check(&R->so)))
 			goto error;
 
@@ -8034,17 +8036,17 @@ exec:
 
 	return 0;
 noquery:
-	// printf("dns_res_exec noquery\n");
+	printf("dns_res_exec noquery\n");
 	error = DNS_ENOQUERY;
 
 	goto error;
 noanswer:
-	// printf("dns_res_exec noanswer\n");
+	printf("dns_res_exec noanswer\n");
 	error = DNS_ENOANSWER;
 
 	goto error;
 toolong:
-	// printf("dns_res_exec toolong\n");
+	printf("dns_res_exec toolong\n");
 	error = DNS_EILLEGAL;
 
 	/* FALL THROUGH */

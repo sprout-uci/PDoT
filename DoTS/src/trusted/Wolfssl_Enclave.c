@@ -128,16 +128,19 @@ struct dns_packet *resolve_query(_Bool recurse, struct Query* query) {
 	struct dns_resolver *R;
 	struct dns_packet *ans;
 	int error;
-    char *qname = query->qname;
-    enum dns_type qtype = query->qtype;
-    enum dns_class qclass = query->qclass;
+    char *qname;
+    enum dns_type qtype;
+    enum dns_class qclass;
 
-	if (!qname)
-		qname = "www.google.com";
-	if (!qtype)
+    if (query) {
+		qname = query->qname;
+		qtype = query->qtype;
+		qclass = query->qclass;
+    } else {
+		qname = "google.com";
 		qtype = DNS_T_A;
-	if (!qclass)
 		qclass = DNS_C_IN;
+    }
 
 	resconf->options.recurse = recurse;
 
@@ -169,8 +172,6 @@ struct dns_packet *resolve_query(_Bool recurse, struct Query* query) {
     }
     dns_header(ans)->qid = query->qid;
 
-	if (!R || 1 < dns_res_release(R))
-		return NULL;
 	dns_res_close(R);
 
 	return ans;
