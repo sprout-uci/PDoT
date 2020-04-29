@@ -53,7 +53,9 @@ int main(int argc, char* argv[]) /* not using since just testing w/ wc_test */
 	/* only print off if no command line arguments were passed in */
 	if (argc != 2 || strlen(argv[1]) != 2) {
 		printf("Usage:\n"
-               "\t-s Run a TLS server in enclave\n"
+               "\t-d Regular run\n"
+               "\t-l Latency evaluation\n"
+               "\t-t Throughput evaluation\n"
                );
         return 0;
 	}
@@ -84,6 +86,10 @@ int main(int argc, char* argv[]) /* not using since just testing w/ wc_test */
         case 't':
             printf("Throughput evaluation:\n");
             server_connect(id, EVAL_THROUGHPUT);
+            break;
+        case 'd':
+            printf("Default run:\n");
+            server_connect(id, NO_EVAL);
             break;
 
 #ifdef HAVE_WOLFSSL_TEST

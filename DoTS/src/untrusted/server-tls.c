@@ -242,6 +242,8 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
         recurse = 1;
     else if (et == EVAL_THROUGHPUT)
         recurse = 0;
+    else
+        recurse = 1;
 
     if (0 != init_hints(recurse)) {
         printf("init_hints failure\n");

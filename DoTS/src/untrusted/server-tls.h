@@ -27,8 +27,9 @@
 #include "dns.h"
 
 enum eval_type {
-    EVAL_LATENCY = 0,
-    EVAL_THROUGHPUT = 1
+    NO_EVAL = 0,
+    EVAL_LATENCY = 1,
+    EVAL_THROUGHPUT = 2
 };
 
 int server_connect(sgx_enclave_id_t id, enum eval_type et);
