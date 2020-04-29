@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ROOT_DIR=$PWD/..
 EVAL_DIR=$ROOT_DIR/DoTS-experiment
@@ -16,9 +16,17 @@ if [ ! -d "bin" ]; then
     mkdir bin
 fi
 
+# Create private key & certificate for Unbound
+cd bin
+openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048
+openssl rsa -pubout -in private_key.pem -out public_key.pem
+openssl req -new -key private_key.pem -out signreq.csr -subj "/C=US/ST=CA/L=Earth/O=SPROUT/OU=IT/CN=www.example.com/emailAddress=email@example.com"
+openssl x509 -req -days 365 -in signreq.csr -signkey private_key.pem -out certificate.pem
+PUBKEY_HASH=$(openssl rsa -in public_key.pem -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)
+
+cd $EVAL_DIR
 # Download Unbound and build it
 if [ ! -d "unbound" ]; then
-    cd $EVAL_DIR
     git clone https://github.com/NLnetLabs/unbound.git
     cd unbound
     git checkout release-1.8.0 # Stubby works with Unbound version 1.8.0
@@ -28,8 +36,8 @@ if [ ! -d "unbound" ]; then
 fi
 
 # Download Stubby (for Unbound) and build it
+cd $EVAL_DIR
 if [ ! -d "getdns" ]; then
-    cd $EVAL_DIR
     git clone https://github.com/getdnsapi/getdns.git
     cd getdns
     git submodule update --init
@@ -40,7 +48,21 @@ if [ ! -d "getdns" ]; then
     cp stubby/stubby $EVAL_DIR/bin/unbound-stubby
 fi
 
-# Copy PDoT app and Stubby for PDoT to bin directory
+# Build PDoT app
+cd $PDOT_DIR/src
+source /opt/intel/sgxsdk/environment
+make clean
+make SGX_MODE=HW SGX_DEBUG=1
 cp $PDOT_DIR/src/App $EVAL_DIR/bin/.
 cp $PDOT_DIR/src/Wolfssl_Enclave.signed.so $EVAL_DIR/bin/.
+
+# Build Stubby for PDoT
+cd $GETDNS_RA_TLS_DIR/build
+../configure --without-libidn --without-libidn2 --enable-stub-only --with-stubby --enable-sgx
+make clean
+make
 cp $GETDNS_RA_TLS_DIR/build/src/stubby $EVAL_DIR/bin/pdot-stubby
+
+# Print necessary information
+echo "Copy and paste the following Base64 encoded public key to config files for Stubby for Unbound."
+echo $PUBKEY_HASH
