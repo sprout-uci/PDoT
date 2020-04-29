@@ -14,6 +14,7 @@ echo $GETDNS_RA_TLS_DIR
 if [ ! -d "bin" ]; then
     cd $EVAL_DIR
     mkdir bin
+    mkdir -p etc/unbound
 fi
 
 # Create private key & certificate for Unbound
@@ -30,7 +31,7 @@ if [ ! -d "unbound" ]; then
     git clone https://github.com/NLnetLabs/unbound.git
     cd unbound
     git checkout release-1.8.0 # Stubby works with Unbound version 1.8.0
-    ./configure
+    ./configure --prefix=$EVAL_DIR/bin
     make -j$(nproc)
     cp unbound $EVAL_DIR/bin/.
 fi
