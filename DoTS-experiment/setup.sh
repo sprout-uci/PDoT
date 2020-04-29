@@ -5,11 +5,6 @@ EVAL_DIR=$ROOT_DIR/DoTS-experiment
 PDOT_DIR=$ROOT_DIR/DoTS
 GETDNS_RA_TLS_DIR=$ROOT_DIR/getdns-with-ratls
 
-echo $ROOT_DIR
-echo $EVAL_DIR
-echo $PDOT_DIR
-echo $GETDNS_RA_TLS_DIR
-
 # Create bin directory that holds all the necessary applications
 if [ ! -d "bin" ]; then
     cd $EVAL_DIR
@@ -65,5 +60,8 @@ make
 cp $GETDNS_RA_TLS_DIR/build/src/stubby $EVAL_DIR/bin/pdot-stubby
 
 # Print necessary information
-echo "Copy and paste the following Base64 encoded public key to config files for Stubby for Unbound."
-echo $PUBKEY_HASH
+cd $EVAL_DIR
+sed -i "s/value:/value: $PUBKEY_HASH/" unbound-stubby-template.yml
+echo "Run App in bin directory with -d and copy paste the MRENCLAVE value here:"
+read MRENCLAVE
+sed -i "s/value:/value: $MRENCLAVE/" pdot-stubby-template.yml
