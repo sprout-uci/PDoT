@@ -56,9 +56,6 @@
 #define O_NONBLOCK 04000
 #define FIOASYNC 0x5452
 
-// #define EVAL_LATENCY
-#define EVAL_THROUGHPUT
-
 /* declare DNS objects */
 struct dns_resolv_conf *resconf;
 struct dns_hosts *hosts;
@@ -93,10 +90,10 @@ int init_resconf(void) {
     if (!(resconf = dns_resconf_open(&error)))
         fprintf(stderr, "dns_resconf_open: %s", dns_strerror(error));
 
-#if defined EVAL_LATENCY
-    error = dns_resconf_loadpath(resconf, "/etc/resolv.conf");
-#else
+#ifdef EVAL_THROUGHPUT
     error = dns_resconf_loadpath(resconf, "resolv.conf");
+#else
+    error = dns_resconf_loadpath(resconf, "/etc/resolv.conf");
 #endif
     if (error) {
         fprintf(stderr, "dns_resconf_loadpath: %s", dns_strerror(error));
@@ -238,10 +235,10 @@ int server_connect(sgx_enclave_id_t id)
         return EXIT_FAILURE;
     }
 
-#if defined EVAL_LATENCY
-    if (0 != init_hints(1)) {
-#else
+#ifdef EVAL_THROUGHPUT
     if (0 != init_hints(0)) {
+#else
+    if (0 != init_hints(1)) {
 #endif
         printf("init_hints failure\n");
         return EXIT_FAILURE;

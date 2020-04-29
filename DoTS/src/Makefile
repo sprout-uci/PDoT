@@ -2,6 +2,8 @@ SGX_SDK ?= /opt/intel/sgxsdk
 SGX_MODE ?= HW
 SGX_ARCH ?= x64
 SGX_DEBUG ?= 1
+DEBUG_DOTS ?= 0
+EVAL_THROUGHPUT ?= 0
 
 
 ##    If linking the switchless library give an error, download the "download_prebuilt.sh" script

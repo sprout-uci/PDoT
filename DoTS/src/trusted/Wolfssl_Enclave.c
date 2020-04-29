@@ -14,7 +14,6 @@
 #include "common.h"
 
 #define TLS_BUFFER_SIZE 514
-#define DEBUG_DOTS 1
 
 struct Query {
     char qname[DNS_D_MAXNAME + 1];
@@ -63,7 +62,7 @@ static sgx_thread_mutex_t *in_mutex;
 
 void printf(const char *fmt, ...)
 {
-#if DEBUG_DOTS
+#ifdef DEBUG_DOTS
     char buf[BUFSIZ] = {'\0'};
     va_list ap;
     va_start(ap, fmt);

@@ -67,6 +67,10 @@ ifeq ($(HAVE_WOLFSSL_BENCHMARK), 1)
 	Wolfssl_C_Extra_Flags += -DHAVE_WOLFSSL_BENCHMARK
 endif
 
+ifeq ($(DEBUG_DOTS), 0)
+    Wolfssl_C_Extra_Flags += -DDEBUG_DOTS
+endif
+
 
 Flags_Just_For_C := -Wno-implicit-function-declaration -std=c11
 Common_C_Cpp_Flags := $(SGX_COMMON_CFLAGS) -nostdinc -fvisibility=hidden -fpie -fstack-protector $(Wolfssl_Enclave_Include_Paths) -fno-builtin -fno-builtin-printf -I.

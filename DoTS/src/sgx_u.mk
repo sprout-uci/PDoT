@@ -74,6 +74,10 @@ else
         App_C_Flags += -DNDEBUG -UEDEBUG -UDEBUG
 endif
 
+ifeq ($(EVAL_THROUGHPUT), 1)
+    App_C_Flags += -DEVAL_THROUGHPUT
+endif
+
 App_Link_Flags := $(SGX_COMMON_CFLAGS) -L$(SGX_LIBRARY_PATH) \
 				  -Wl,--whole-archive -lsgx_uswitchless -Wl,--no-whole-archive \
 				  -L../deps/local/lib -l$(Urts_Library_Name) -lpthread -lssl -lcrypto -lcurl ../deps/local/lib/libwolfssl.a -lz -lm
