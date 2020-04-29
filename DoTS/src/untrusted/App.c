@@ -40,8 +40,6 @@ typedef struct func_args {
     int    return_code;
 } func_args;
 
-
-
 int main(int argc, char* argv[]) /* not using since just testing w/ wc_test */
 {
 	sgx_enclave_id_t id;
@@ -79,9 +77,13 @@ int main(int argc, char* argv[]) /* not using since just testing w/ wc_test */
 
 
     switch(argv[1][1]) {
-        case 's':
-            printf("Server Test:\n");
-            server_connect(id);
+        case 'l':
+            printf("Latency evaluation:\n");
+            server_connect(id, EVAL_LATENCY);
+            break;
+        case 't':
+            printf("Throughput evaluation:\n");
+            server_connect(id, EVAL_THROUGHPUT);
             break;
 
 #ifdef HAVE_WOLFSSL_TEST

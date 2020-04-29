@@ -84,17 +84,19 @@ struct ctarg_pkg {
 
 static volatile int shutdwn = 0;
 
-int init_resconf(void) {
+int init_resconf(enum eval_type et) {
     int error = 0;
 
     if (!(resconf = dns_resconf_open(&error)))
         fprintf(stderr, "dns_resconf_open: %s", dns_strerror(error));
 
-#ifdef EVAL_THROUGHPUT
-    error = dns_resconf_loadpath(resconf, "resolv.conf");
-#else
-    error = dns_resconf_loadpath(resconf, "/etc/resolv.conf");
-#endif
+    if (et == EVAL_LATENCY)
+        error = dns_resconf_loadpath(resconf, "/etc/resolv.conf");
+    else if (et == EVAL_THROUGHPUT)
+        error = dns_resconf_loadpath(resconf, "resolv.conf");
+    else
+        error = dns_resconf_loadpath(resconf, "/etc/resolv.conf");
+
     if (error) {
         fprintf(stderr, "dns_resconf_loadpath: %s", dns_strerror(error));
         return NULL;
@@ -196,7 +198,7 @@ void *QueryHandler(void* args) {
 }
 
 
-int server_connect(sgx_enclave_id_t id)
+int server_connect(sgx_enclave_id_t id, enum eval_type et)
 {
     int                sgxStatus;
     int                sockfd;
@@ -205,6 +207,7 @@ int server_connect(sgx_enclave_id_t id)
     struct sockaddr_in clientAddr;
     socklen_t          size = sizeof(clientAddr);
     int                ret = 0;                        /* variable for error checking */
+    _Bool              recurse = 1;
 
     /* declare thread variable */
     struct ctarg_pkg clientThread[MAX_CONCURRENT_THREADS];
@@ -215,7 +218,7 @@ int server_connect(sgx_enclave_id_t id)
     /* Initialize wolfSSL */
     enc_wolfSSL_Init(id, &sgxStatus);
 
-    if (0 != init_resconf()) {
+    if (0 != init_resconf(et)) {
         printf("init_resconf failure\n");
         return EXIT_FAILURE;
     }
@@ -235,11 +238,12 @@ int server_connect(sgx_enclave_id_t id)
         return EXIT_FAILURE;
     }
 
-#ifdef EVAL_THROUGHPUT
-    if (0 != init_hints(0)) {
-#else
-    if (0 != init_hints(1)) {
-#endif
+    if (et == EVAL_LATENCY)
+        recurse = 1;
+    else if (et == EVAL_THROUGHPUT)
+        recurse = 0;
+
+    if (0 != init_hints(recurse)) {
         printf("init_hints failure\n");
         return EXIT_FAILURE;
     }
