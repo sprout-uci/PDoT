@@ -27,6 +27,7 @@ sed -i "s/address_data:/address_data: 127.0.0.1/" unbound-latency-stubby.yml
 cd $BIN_DIR
 echo "Running PDoT..."
 ./App -l > /dev/null 2>&1 &
+sleep 3
 echo "Running stubby..."
 echo "Running DoTS measurement (cold start)..."
 for i in $(seq 0 999)
@@ -40,7 +41,7 @@ do
   sleep 1
 done
 echo "Running DoTS measurement (warm start)..."
-for i in $(seq 0 999)
+for i in $(seq 0 99)
 do
   cd $BIN_DIR
   sudo -b ./pdot-stubby -C pdot-latency-stubby.yml -g > /dev/null 2>&1 &
@@ -74,7 +75,7 @@ do
   sleep 1
 done
 echo "Running unbound measurement (warm start)..."
-for i in $(seq 0 999)
+for i in $(seq 0 99)
 do
   cd $BIN_DIR
   sudo -b ./unbound-stubby -C unbound-latency-stubby.yml -g > /dev/null 2>&1 &
