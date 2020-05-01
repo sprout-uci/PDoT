@@ -61,7 +61,7 @@ cp $GETDNS_RA_TLS_DIR/build/src/stubby $EVAL_DIR/bin/pdot-stubby
 
 # Print necessary information
 cd $EVAL_DIR
-sed -i "s/value:/value: $PUBKEY_HASH/" unbound-stubby-template.yml
+sed -i "s;value:;value: $PUBKEY_HASH;" unbound-stubby-template.yml
 echo "Run App in bin directory with -d and copy paste the MRENCLAVE value here:"
 read MRENCLAVE
-sed -i "s/value:/value: $MRENCLAVE/" pdot-stubby-template.yml
+sed -i "s;value:;value: $MRENCLAVE;" pdot-stubby-template.yml
