@@ -39,9 +39,11 @@ if [ ! -d "getdns" ]; then
     cd getdns
     git checkout v1.4.2
     git submodule update --init
+    libtoolize -ci
+    autoreconf -fi
     mkdir build
     cd build
-    cmake .. -DENABLE_STUB_ONLY=on -DBUILD_STUBBY=on -DUSE_LIBIDN2=off
+    ../configure --without-libidn --without-libidn2 --enable-stub-only --with-stubby
     make -j$(nproc)
     cp stubby/stubby $EVAL_DIR/bin/unbound-stubby
 fi
