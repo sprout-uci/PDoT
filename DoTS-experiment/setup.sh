@@ -9,6 +9,7 @@ GETDNS_RA_TLS_DIR=$ROOT_DIR/getdns-with-ratls
 if [ ! -d "bin" ]; then
     cd $EVAL_DIR
     mkdir bin
+    cd bin
     mkdir -p etc/unbound
 fi
 
