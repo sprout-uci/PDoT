@@ -4,21 +4,26 @@
 
 START_PORT=53
 
+ROOT_DIR=$PWD/..
+EVAL_DIR=$ROOT_DIR/DoTS-experiment
+BIN_DIR=$ROOT_DIR/DoTS-experiment/bin
+
 option="${1}"
 case ${option} in
   "one") # ./dots_rate_measurement.sh one 53 100
     END_PORT=$2
     echo "Running experiment for one time..."
     #echo "Running stubby..."
-    cd ~/DoTS-experiment
+    cd $BIN_DIR
     for i in $(seq $START_PORT $END_PORT)
     do
       #echo "Running stubby with dots-stubby-$i.yml"
-      nohup sudo -b stubby -C dots-config/dots-stubby-${i}.yml > /dev/null 2>&1 &
+      nohup sudo -b ./pdot-stubby -C $EVAL_DIR/dots-config/pdot-stubby-${i}.yml > /dev/null 2>&1 &
       sleep 1 
     done
     sleep 3 
     #echo "Running DoTS measurement..."
+    cd $EVAL_DIR
     seq $START_PORT $END_PORT | parallel -j $(($END_PORT-$START_PORT+1)) ./rate_parallel.py dots {} $3 $(($END_PORT-$START_PORT+1))
     #echo "Cleaning up DoTS measurement..."
     sleep 5 
@@ -30,15 +35,16 @@ case ${option} in
     do
       echo "Experiment for $(($END_PORT-$START_PORT+1)) clients:"
       #echo "Running stubby..."
-      cd ~/DoTS-experiment
+      cd $BIN_DIR
       for i in $(seq $START_PORT $END_PORT)
       do
         #echo "Running stubby with dots-stubby-$i.yml"
-        nohup sudo -b stubby -C dots-config/dots-stubby-${i}.yml > /dev/null 2>&1 &
+        nohup sudo -b ./pdot-stubby -C $EVAL_DIR/dots-config/pdot-stubby-${i}.yml > /dev/null 2>&1 &
         sleep 1 
       done
       sleep 3 
       #echo "Running DoTS measurement..."
+      cd $EVAL_DIR
       seq $START_PORT $END_PORT | parallel -j $(($END_PORT-$START_PORT+1)) ./rate_parallel.py dots {} $2 $(($END_PORT-$START_PORT+1))
       #echo "Cleaning up DoTS measurement..."
       sleep 5 
@@ -54,15 +60,16 @@ case ${option} in
     for j in $(seq 5 5 100)
     do
       #echo "Running stubby..."
-      cd ~/DoTS-experiment
+      cd $BIN_DIR
       for i in $(seq $START_PORT $END_PORT)
       do
         #echo "Running stubby with dots-stubby-$i.yml"
-        nohup sudo -b stubby -C dots-config/dots-stubby-${i}.yml > /dev/null 2>&1 &
+        nohup sudo -b ./pdot-stubby -C $EVAL_DIR/dots-config/pdot-stubby-${i}.yml > /dev/null 2>&1 &
         sleep 1 
       done
       sleep 3 
       #echo "Running DoTS measurement..."
+      cd $EVAL_DIR
       seq $START_PORT $END_PORT | parallel -j $(($END_PORT-$START_PORT+1)) ./rate_parallel.py dots {} $j $(($END_PORT-$START_PORT+1))
       #echo "Cleaning up DoTS measurement..."
       sleep 5 
