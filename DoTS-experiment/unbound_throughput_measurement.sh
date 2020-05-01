@@ -24,7 +24,7 @@ case ${option} in
     sleep 5 
     #echo "Running DoTS measurement..."
     cd $EVAL_DIR
-    seq $START_PORT $END_PORT | parallel -j $(($END_PORT-$START_PORT+1)) ./rate_parallel.py unbound {} $3 $(($END_PORT-$START_PORT+1))
+    seq $START_PORT $END_PORT | parallel -j $(($END_PORT-$START_PORT+1)) ./throughput.py unbound {} $3 $(($END_PORT-$START_PORT+1))
     #echo "Cleaning up DoTS measurement..."
     sleep 5 
     sudo pkill stubby
@@ -45,7 +45,7 @@ case ${option} in
       sleep 3 
       #echo "Running DoTS measurement..."
       cd $EVAL_DIR
-      seq $START_PORT $END_PORT | parallel -j $(($END_PORT-$START_PORT+1)) ./rate_parallel.py unbound {} $2 $(($END_PORT-$START_PORT+1))
+      seq $START_PORT $END_PORT | parallel -j $(($END_PORT-$START_PORT+1)) ./throughput.py unbound {} $2 $(($END_PORT-$START_PORT+1))
       #echo "Cleaning up DoTS measurement..."
       sleep 5 
       sudo pkill stubby
@@ -70,7 +70,7 @@ case ${option} in
       sleep 3 
       #echo "Running DoTS measurement..."
       cd $EVAL_DIR
-      seq $START_PORT $END_PORT | parallel -j $(($END_PORT-$START_PORT+1)) ./rate_parallel.py unbound {} $j $(($END_PORT-$START_PORT+1))
+      seq $START_PORT $END_PORT | parallel -j $(($END_PORT-$START_PORT+1)) ./throughput.py unbound {} $j $(($END_PORT-$START_PORT+1))
       #echo "Cleaning up DoTS measurement..."
       sleep 5 
       sudo pkill stubby
