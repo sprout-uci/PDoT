@@ -16,7 +16,12 @@
  - `throughput_plot_rate.py`: Python script used to create Figure 5 in the PDoT paper.
 
 # Download, Compile, and Run Unbound
-Clone Unbound from Github: `git clone https://github.com/getdnsapi/getdns.git`
+Clone Unbound from Github:
+```bash
+    git clone https://github.com/NLnetLabs/unbound.git
+    cd unbound
+    git checkout release-1.8.0 # Stubby works with Unbound version 1.8.0
+```
 
 Follow the README to compile and run Unbound.
 
