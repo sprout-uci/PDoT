@@ -44,7 +44,7 @@ popd
 
 pushd sgx-ra-tls
 if [ ! -f ra_tls_options.c ] ; then
-    echo "Please run 'SPID={} EPID_SUBSCRIPTION_KEY={} QUOTE_TYPE=SGX_LINKABLE_SIGNATURE bash ra_tls_options.c.sh > ra_tls_options'."
+    echo "Please run 'SPID={} EPID_SUBSCRIPTION_KEY={} QUOTE_TYPE=SGX_LINKABLE_SIGNATURE bash ra_tls_options.c.sh > ra_tls_options.c'."
     exit 1
 fi
 make -f ratls-wolfssl.mk || exit 1
