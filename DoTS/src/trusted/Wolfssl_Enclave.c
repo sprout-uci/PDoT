@@ -24,7 +24,6 @@ struct Query {
 struct QueryBuffer {
     char *buffer;
     int connd;
-    int idx;
     WOLFSSL* ssl;
     struct QueryBuffer *next;
 };
@@ -45,6 +44,9 @@ struct QueryHandlerCleanup {
     int query_processer_sig;
     int cleanup_finished;
 };
+
+// Create array of WOLFSSL objects
+struct WOLFSSL *ssls[MAX_CONCURRENT_THREADS];
 
 // Create QueryList to store incoming requests and outgoing responses
 struct InQueryList *inQueryList;
@@ -290,20 +292,31 @@ void enc_wolfSSL_Debugging_OFF(void)
 int enc_wolfSSL_Init(struct ClientQueue* cq)
 {
     inQueryList = (struct InQueryList *) malloc(sizeof(struct InQueryList));
-    memset(inQueryList, 0, sizeof(struct InQueryList));
     for (int i=0; i < MAX_CONCURRENT_THREADS; i++) {
         outQueryLists[i] = (struct OutQueryList *) malloc(sizeof(struct OutQueryList));
-        memset(outQueryLists[i], 0, sizeof(struct OutQueryList));
+        outQueryLists[i]->head = NULL;
+        outQueryLists[i]->tail = NULL;
         outQueryLists[i]->reader_writer_sig = 1;
     }
+    inQueryList->head = NULL;
+    inQueryList->tail = NULL;
     for (int i=0; i < QUERY_HANDLE_THREADS; i++) {
         cleanupSet[i] = (struct QueryHandlerCleanup *) malloc(sizeof(struct QueryHandlerCleanup));
-        memset(cleanupSet[i], 0, sizeof(struct QueryHandlerCleanup));
         cleanupSet[i]->query_processer_sig = 1;
         cleanupSet[i]->cleanup_finished = 0;
     }
     client_queue = cq;
     return wolfSSL_Init();
+}
+
+void enc_create_ssls(WOLFSSL_CTX* ctx) {
+    if(sgx_is_within_enclave(ctx, wolfSSL_CTX_GetObjectSize()) != 1)
+        abort();
+    for (int i=0; i < MAX_CONCURRENT_THREADS; i++) {
+        // WOLFSSL array
+        ssls[i] = wolfSSL_new(ctx);
+        assert(ssls[i] != NULL);
+    }
 }
 
 WOLFSSL_METHOD* enc_wolfTLSv1_2_client_method(void)
@@ -442,18 +455,31 @@ int enc_mutex_destroy(void)
     return 0;
 }
 
-int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int idx)
+int enc_wolfSSL_read_from_client(int idx)
 {
     int ret = 0;
 
+    // Create new WOLFSSL object
+    printf("[ClientReader %i] Create WOLFSSL object.\n", idx);
+    WOLFSSL* ssl = ssls[idx];
+    if (ssl == NULL) {
+        eprintf("[ClientReader %i] Failed to create new WOLFSSL object.\n", idx);
+        return -1;
+    }
+    // Set SSL socket to nonblock
+    printf("[ClientReader %i] Set SSL to nonblock.\n", idx);
+    wolfSSL_set_using_nonblock(ssl, 1);
+    // Check whether the initialization is finished
+    printf("[ClientReader %i] Check whether init is finished.\n", idx);
+    ret = wolfSSL_is_init_finished(ssl);
+    if (ret == 1) {
+        eprintf("[ClientReader %i] Failed to initialize WOLFSSL object.\n", idx);
+        return -1;
+    }
     // Check whether client_queue is not null
     printf("[ClientReader %i] Check client_queue.\n", idx);
     if (client_queue == NULL || client_mutex == NULL) {
         eprintf("[ClientReader %i] client_queue or client_mutex is NULL.\n", idx);
-        return -1;
-    }
-    if (client_queue->head != NULL || client_queue->tail != NULL) {
-        eprintf("[ClientReader %i] head or tail of client_queue is not NULL.\n", idx);
         return -1;
     }
 
@@ -472,55 +498,25 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int idx)
         while (!(client_queue->head != NULL && sgx_thread_mutex_trylock(client_mutex) == 0)) {}
         struct ClientQueueEntry *cqe;
         // Double check that we got the head
-        if (client_queue->head == NULL) {
-            break;
-        }
-        // Create new WOLFSSL object
-        printf("[ClientReader %i] Create WOLFSSL object.\n", idx);
-        WOLFSSL* ssl = wolfSSL_new(ctx);
-        if (ssl == NULL) {
-            eprintf("[ClientReader %i] Failed to create new WOLFSSL object.\n", idx);
-            ret = -1;
-            break;
-        }
-        // Set SSL socket to nonblock
-        printf("[ClientReader %i] Set SSL to nonblock.\n", idx);
-        wolfSSL_set_using_nonblock(ssl, 1);
-        // Check whether the initialization is finished
-        printf("[ClientReader %i] Check whether init is finished.\n", idx);
-        ret = wolfSSL_is_init_finished(ssl);
-        if (ret == 1) {
-            eprintf("[ClientReader %i] Failed to initialize WOLFSSL object.\n", idx);
-            ret = -1;
-            break;
-        }
-        // Copy ClientQueueEntry
-        cqe = client_queue->head;
-        // Set file descriptor to WOLFSSL object
-        ret = wolfSSL_set_fd(ssl, cqe->connd);
-        if (ret != SSL_SUCCESS) {
-            eprintf("[ClientReader %i] Failed to set FD to WOLFSSL object.\n", idx);
-            outQueryLists[idx]->reader_writer_sig = 0;
-            // Unlock the mutex
-            if (sgx_thread_mutex_unlock(client_mutex) != 0) {
-                eprintf("[ClientReader %i] Failed to unlock mutex.\n", idx);
+        if (client_queue->head != NULL) {
+            cqe = client_queue->head;
+            // Set file descriptor to WOLFSSL object
+            ret = wolfSSL_set_fd(ssl, cqe->connd);
+            if (ret != SSL_SUCCESS) {
+                eprintf("[ClientReader %i] Failed to set FD to WOLFSSL object.\n", idx);
                 outQueryLists[idx]->reader_writer_sig = 0;
-                ret = -1;
                 break;
             }
-            ret = -1;
-            break;
-        }
-        // Update head
-        client_queue->head = cqe->next;
-        if (client_queue->head == NULL) {
-            client_queue->tail = NULL;
+            // Update head
+            client_queue->head = cqe->next;
+            if (client_queue->head == NULL) {
+                client_queue->tail = NULL;
+            }
         }
         // Unlock the mutex
-        if (sgx_thread_mutex_unlock(client_mutex) != 0) {
+        if (sgx_thread_mutex_unlock(in_mutex) != 0) {
             eprintf("[ClientReader %i] Failed to unlock mutex.\n", idx);
             outQueryLists[idx]->reader_writer_sig = 0;
-            ret = -1;
             break;
         }
         /* Read the client data into our buff array */
@@ -536,11 +532,9 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int idx)
 
             // Prepare QueryBuffer
             struct QueryBuffer *queryBuffer = (struct QueryBuffer *) malloc(sizeof(struct QueryBuffer));
-            memset(queryBuffer, 0, sizeof(struct QueryBuffer));
             queryBuffer->buffer = buffer;
             queryBuffer->ssl = ssl;
             queryBuffer->connd = cqe->connd;
-            queryBuffer->idx = idx;
             queryBuffer->next = NULL;
 
             // Wait until we can lock mutex
@@ -649,8 +643,7 @@ int enc_wolfSSL_process_query(int tid)
         }
 
         // Check whether this client is still connected or not.
-        // TODO: Fix this weird relationship between outQueryLists and connd.
-        if (outQueryLists[qB->idx]->reader_writer_sig == 0) {
+        if (outQueryLists[qB->connd]->reader_writer_sig == 0) {
             // Connection to this client has ended.
             printf("[QueryHandle  %i] connection to %i has ended.\n", tid, qB->connd);
             free(query);
@@ -699,16 +692,14 @@ int enc_wolfSSL_process_query(int tid)
 
         // Prepare QueryBuffer
         struct QueryBuffer *queryBuffer = (struct QueryBuffer *) malloc(sizeof(struct QueryBuffer));
-        memset(queryBuffer, 0, sizeof(struct QueryBuffer));
         queryBuffer->buffer = (char *)ans;
         queryBuffer->connd = qB->connd;
         queryBuffer->ssl = qB->ssl;
-        queryBuffer->idx = qB->idx;
         queryBuffer->next = NULL;
 
         // Wait until we can lock mutex
         printf("[QueryHandle  %i] waiting for mutex...\n", tid);
-        while (sgx_thread_mutex_trylock(outQueryLists[qB->idx]->out_mutex) != 0) {
+        while (sgx_thread_mutex_trylock(outQueryLists[qB->connd]->out_mutex) != 0) {
             if (cleanupSet[tid]->query_processer_sig == 0) {
                 cleanupSet[tid]->cleanup_finished = 1;
                 free(qB->buffer);
@@ -719,12 +710,12 @@ int enc_wolfSSL_process_query(int tid)
                 break;
             }
         }
-        if (outQueryLists[qB->idx]->reader_writer_sig == 1) {
+        if (outQueryLists[qB->connd]->reader_writer_sig == 1) {
             // Store QueryBuffer to linked list
-            if (outQueryLists[qB->idx]->head == NULL && outQueryLists[qB->idx]->tail == NULL) {
+            if (outQueryLists[qB->connd]->head == NULL && outQueryLists[qB->connd]->tail == NULL) {
                 printf("[QueryHandle  %i] Adding first elem. to QueryBuffer.\n", tid);
-                outQueryLists[qB->idx]->head = outQueryLists[qB->idx]->tail = queryBuffer;
-            } else if (outQueryLists[qB->idx]->head == NULL || outQueryLists[qB->idx]->tail == NULL) {
+                outQueryLists[qB->connd]->head = outQueryLists[qB->connd]->tail = queryBuffer;
+            } else if (outQueryLists[qB->connd]->head == NULL || outQueryLists[qB->connd]->tail == NULL) {
                 // Something is wrong.
                 eprintf("[QueryHandle  %i] Failed to add query to QueryBuffer.\n", tid);
                 free(qB->buffer);
@@ -732,14 +723,14 @@ int enc_wolfSSL_process_query(int tid)
                 free(qB);
                 free(query);
                 free(queryBuffer);
-                if (sgx_thread_mutex_unlock(outQueryLists[qB->idx]->out_mutex) != 0) {
+                if (sgx_thread_mutex_unlock(outQueryLists[qB->connd]->out_mutex) != 0) {
                     eprintf("[QueryHandle  %i] Failed to unlock mutex.\n", tid);
                 }
                 return -1;
             } else {
                 printf("[QueryHandle  %i] Adding another elem. to QueryBuffer.\n", tid);
-                outQueryLists[qB->idx]->tail->next = queryBuffer;
-                outQueryLists[qB->idx]->tail = queryBuffer;
+                outQueryLists[qB->connd]->tail->next = queryBuffer;
+                outQueryLists[qB->connd]->tail = queryBuffer;
             }
         } else {
             // Connection to this client has ended.
@@ -750,7 +741,7 @@ int enc_wolfSSL_process_query(int tid)
 
         // Unlock mutex
         printf("[QueryHandle  %i] unlock mutex out_head_mutex and out_tail_mutex\n", tid);
-        if (sgx_thread_mutex_unlock(outQueryLists[qB->idx]->out_mutex) != 0) {
+        if (sgx_thread_mutex_unlock(outQueryLists[qB->connd]->out_mutex) != 0) {
             eprintf("[QueryHandle  %i] Failed to unlock mutex.\n", tid);
             free(qB->buffer);
             free(ans);
@@ -845,7 +836,6 @@ int enc_wolfSSL_write_to_client(int idx)
         printf("[ClientWriter %i] clean up\n", idx);
         free(answer);
         free(qB->buffer);
-        wolfSSL_free(qB->ssl);
         free(qB);
     }
 

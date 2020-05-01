@@ -19,6 +19,7 @@ enclave {
         public int wc_benchmark_test([user_check]void* args);
 
 		public int enc_wolfSSL_Init([user_check] struct ClientQueue* cq);
+		public void enc_create_ssls([user_check]WOLFSSL_CTX* ctx);
 		public void enc_wolfSSL_Debugging_ON(void);
 		public void enc_wolfSSL_Debugging_OFF(void);
 		public WOLFSSL_METHOD* enc_wolfTLSv1_2_client_method(void);
@@ -50,7 +51,7 @@ enclave {
 										 int ret);
 		public int enc_mutex_init(void);
 		public int enc_mutex_destroy(void);
-		public int enc_wolfSSL_read_from_client([user_check]WOLFSSL_CTX* ctx, int connd);
+		public int enc_wolfSSL_read_from_client(int connd);
 		public int enc_wolfSSL_write_to_client(int connd);
 		public int enc_wolfSSL_read([user_check]WOLFSSL* ssl);
 		public int enc_wolfSSL_process_query(int tid);
