@@ -26,8 +26,14 @@
 #include "Wolfssl_Enclave_u.h"   /* contains untrusted wrapper functions used to call enclave functions*/
 #include "dns.h"
 
-int server_connect(sgx_enclave_id_t id);
-int init_resconf(void);
+enum eval_type {
+    NO_EVAL = 0,
+    EVAL_LATENCY = 1,
+    EVAL_THROUGHPUT = 2
+};
+
+int server_connect(sgx_enclave_id_t id, enum eval_type et);
+int init_resconf(enum eval_type et);
 int init_hosts(void);
 struct dns_cache *cache(void);
 int init_hints(_Bool recurse);

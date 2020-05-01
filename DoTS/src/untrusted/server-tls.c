@@ -46,12 +46,11 @@
 /* threads */
 #include <pthread.h>
 
+#include "common.h"
+
 #define DEFAULT_PORT 11111
 
 #define CIPHER_LIST "ECDHE-ECDSA-AES128-GCM-SHA256"
-
-#define MAX_CONCURRENT_THREADS 60
-#define QUERY_HANDLE_THREADS 30
 
 #define F_SETFL 4
 #define O_NONBLOCK 04000
@@ -66,6 +65,8 @@ struct dns_hints *hints;
 WOLFSSL_CTX* ctx;
 WOLFSSL_METHOD* method;
 
+int connds[MAX_CONCURRENT_THREADS];
+
 /* Thread argument package */
 struct qtarg_pkg {
     pthread_t tid;
@@ -75,25 +76,27 @@ struct qtarg_pkg {
 
 /* Thread argument package */
 struct ctarg_pkg {
-    int       open;
     pthread_t rtid;
     pthread_t wtid;
-    int       num;
-    int       connd;
     int       sgx_id;
     int       t_count;
-    WOLFSSL*  ssl;
 };
 
 static volatile int shutdwn = 0;
 
-int init_resconf(void) {
+int init_resconf(enum eval_type et) {
     int error = 0;
 
     if (!(resconf = dns_resconf_open(&error)))
         fprintf(stderr, "dns_resconf_open: %s", dns_strerror(error));
 
-    error = dns_resconf_loadpath(resconf, "/etc/resolv.conf");
+    if (et == EVAL_LATENCY)
+        error = dns_resconf_loadpath(resconf, "/etc/resolv.conf");
+    else if (et == EVAL_THROUGHPUT)
+        error = dns_resconf_loadpath(resconf, "resolv.conf");
+    else
+        error = dns_resconf_loadpath(resconf, "/etc/resolv.conf");
+
     if (error) {
         fprintf(stderr, "dns_resconf_loadpath: %s", dns_strerror(error));
         return NULL;
@@ -147,25 +150,14 @@ void* ClientReader(void* args)
     int               sgxStatus;
     int               ret;
 
-    /* Attach wolfSSL to the socket */
-        sgxStatus = enc_wolfSSL_set_fd(pkg->sgx_id, &ret, pkg->ssl, pkg->connd);
-        if (sgxStatus != SGX_SUCCESS || ret != SSL_SUCCESS) {
-            printf("Client %d, connd %i: wolfSSL_set_fd failure\n", pkg->num, pkg->connd);
-            pkg->open = 1;
-            pthread_exit(NULL);
-    }
-
-    sgxStatus = enc_wolfSSL_read_from_client(pkg->sgx_id, &ret, pkg->ssl, pkg->connd);
+    sgxStatus = enc_wolfSSL_read_from_client(pkg->sgx_id, &ret, ctx, &(connds[pkg->t_count]), pkg->t_count);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
-        printf("Server failed to read from client %d, connd %i\n", pkg->num, pkg->connd);
-        close(pkg->connd);           /* Close the connection to the client   */
-        pkg->open = 1;
+        printf("Server failed to read from client\n");
         pthread_exit(NULL);
     }
 
     /* Cleanup after this connection */
     // printf("Clean up ClientHandler\n");
-    pkg->open = 1;
     pthread_exit(NULL);
 }
 
@@ -175,15 +167,14 @@ void* ClientWriter(void* args)
     int               sgxStatus;
     int               ret;
 
-    sgxStatus = enc_wolfSSL_write_to_client(pkg->sgx_id, &ret, pkg->ssl, pkg->connd);
+    sgxStatus = enc_wolfSSL_write_to_client(pkg->sgx_id, &ret, pkg->t_count);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
-        printf("Server failed to write to client %d, connd %i\n", pkg->num, pkg->connd);
+        printf("Server failed to write to client\n");
     }
 
     /* Cleanup after this connection */
     // printf("Clean up ClientHandler\n");
-    close(pkg->connd);           /* Close the connection to the client   */
-    pkg->open = 1;
+    // close(pkg->connd);           /* Close the connection to the client   */
     pthread_exit(NULL);
 }
 
@@ -204,7 +195,7 @@ void *QueryHandler(void* args) {
 }
 
 
-int server_connect(sgx_enclave_id_t id)
+int server_connect(sgx_enclave_id_t id, enum eval_type et)
 {
     int                sgxStatus;
     int                sockfd;
@@ -213,6 +204,7 @@ int server_connect(sgx_enclave_id_t id)
     struct sockaddr_in clientAddr;
     socklen_t          size = sizeof(clientAddr);
     int                ret = 0;                        /* variable for error checking */
+    _Bool              recurse = 1;
 
     /* declare thread variable */
     struct ctarg_pkg clientThread[MAX_CONCURRENT_THREADS];
@@ -220,10 +212,14 @@ int server_connect(sgx_enclave_id_t id)
     int clientIdx;
     int queryIdx;
 
+    for (int i = 0; i < MAX_CONCURRENT_THREADS; i++) {
+        connds[i] = -1;
+    }
+
     /* Initialize wolfSSL */
     enc_wolfSSL_Init(id, &sgxStatus);
 
-    if (0 != init_resconf()) {
+    if (0 != init_resconf(et)) {
         printf("init_resconf failure\n");
         return EXIT_FAILURE;
     }
@@ -243,7 +239,14 @@ int server_connect(sgx_enclave_id_t id)
         return EXIT_FAILURE;
     }
 
-    if (0 != init_hints(1)) {
+    if (et == EVAL_LATENCY)
+        recurse = 1;
+    else if (et == EVAL_THROUGHPUT)
+        recurse = 0;
+    else
+        recurse = 1;
+
+    if (0 != init_hints(recurse)) {
         printf("init_hints failure\n");
         return EXIT_FAILURE;
     }
@@ -319,9 +322,19 @@ int server_connect(sgx_enclave_id_t id)
 
 
     /* initialise thread array */
-    for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS; ++clientIdx) {
-        clientThread[clientIdx].open = 1;
-        clientThread[clientIdx].num = clientIdx;
+    for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS; clientIdx++) {
+        clientThread[clientIdx].t_count = clientIdx;
+        clientThread[clientIdx].sgx_id = id;
+
+        /* Launch a reader thread to deal with the new client */
+        pthread_create(&clientThread[clientIdx].rtid, NULL, ClientReader, &clientThread[clientIdx]);
+        /* State that we won't be joining this thread */
+        pthread_detach(clientThread[clientIdx].rtid);
+
+        /* Launch a writer thread to deal with the new client */
+        pthread_create(&clientThread[clientIdx].wtid, NULL, ClientWriter, &clientThread[clientIdx]);
+        /* State that we won't be joining this thread */
+        pthread_detach(clientThread[clientIdx].wtid);
     }
 
     for (int i = 0; i < QUERY_HANDLE_THREADS; i++) {
@@ -339,12 +352,6 @@ int server_connect(sgx_enclave_id_t id)
 
         signal(SIGINT, intHandler);
 
-        for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS && !clientThread[clientIdx].open; ++clientIdx);
-        if (clientIdx == MAX_CONCURRENT_THREADS) {
-            printf("Exceeded max number of threads!\n");
-            continue;
-        }
-
         /* Accept client connections */
         if ((connd = accept(sockfd, (struct sockaddr*)&clientAddr, &size))
             == -1) {
@@ -352,54 +359,19 @@ int server_connect(sgx_enclave_id_t id)
         }
         
         if (connd > 0) {
-            WOLFSSL* ssl;
-            sgxStatus = enc_wolfSSL_new(id, &ssl, ctx);
-            if (sgxStatus != SGX_SUCCESS || ssl == NULL) {
-                printf("Client %d, connd %i: wolfSSL_new failure\n", clientIdx, connd);
-                close(connd);           /* Close the connection to the client   */
+            for (clientIdx = 0; (clientIdx < MAX_CONCURRENT_THREADS) && (connds[clientIdx] > 0); clientIdx++);
+            if (clientIdx == MAX_CONCURRENT_THREADS) {
+                printf("Exceeded max number of threads!\n");
                 continue;
             }
-            sgxStatus = enc_wolfSSL_set_using_nonblock(id, ssl, 1);
-            if (sgxStatus != SGX_SUCCESS) {
-                printf("Client %d, connd %i: wolfSSL_set_using_nonblock failure\n", clientIdx, connd);
-                close(connd);           /* Close the connection to the client   */
-                continue;
-            }
-            sgxStatus = enc_wolfSSL_is_init_finished(id, &ret, ssl);
-            if (sgxStatus != SGX_SUCCESS || ret == 1) {
-                printf("Client %d, connd %i: wolfSSL_is_init_finished failure\n", clientIdx, connd);
-                close(connd);           /* Close the connection to the client   */
-                continue;
-            }
-
             /* Fill out the relevent thread argument package information */
-            clientThread[clientIdx].open = 0;
-            clientThread[clientIdx].connd = connd;
-            clientThread[clientIdx].sgx_id = id;
-            clientThread[clientIdx].ssl = ssl;
-
-            /* Launch a reader thread to deal with the new client */
-            pthread_create(&clientThread[clientIdx].rtid, NULL, ClientReader, &clientThread[clientIdx]);
-            /* State that we won't be joining this thread */
-            pthread_detach(clientThread[clientIdx].rtid);
-
-            /* Launch a writer thread to deal with the new client */
-            pthread_create(&clientThread[clientIdx].wtid, NULL, ClientWriter, &clientThread[clientIdx]);
-            /* State that we won't be joining this thread */
-            pthread_detach(clientThread[clientIdx].wtid);
+            connds[clientIdx] = connd;
         }
 
     }
 
     do {
         shutdwn = 1;
-
-        for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS; ++clientIdx) {
-            if (!clientThread[clientIdx].open) {
-                clientThread[clientIdx].open = 1;
-                shutdwn = 0;
-            }
-        }
     } while (!shutdwn);
 
     /* Cleanup and return */

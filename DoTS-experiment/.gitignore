@@ -4,6 +4,9 @@
 /normal-config/*.yml
 /images
 /csv
+/bin
+/unbound
+/getdns
 *.o
 *.so
 *.pcap

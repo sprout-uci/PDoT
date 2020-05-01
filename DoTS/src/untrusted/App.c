@@ -22,9 +22,9 @@
 
 #include "stdafx.h"
 #include "App.h" /* contains include of Enclave_u.h which has wolfSSL header files */
-#include "client-tls.h"
 #include "server-tls.h"
 #include "time.h"
+#include <common.h>
 
 /* Use Debug SGX ? */
 #if _DEBUG
@@ -39,8 +39,6 @@ typedef struct func_args {
     int    return_code;
 } func_args;
 
-
-
 int main(int argc, char* argv[]) /* not using since just testing w/ wc_test */
 {
 	sgx_enclave_id_t id;
@@ -54,15 +52,9 @@ int main(int argc, char* argv[]) /* not using since just testing w/ wc_test */
 	/* only print off if no command line arguments were passed in */
 	if (argc != 2 || strlen(argv[1]) != 2) {
 		printf("Usage:\n"
-               "\t-c Run a TLS client in enclave\n"
-               "\t-s Run a TLS server in enclave\n"
-#ifdef HAVE_WOLFSSL_TEST
-               "\t-t Run wolfCrypt tests only \n"
-#endif /* HAVE_WOLFSSL_TEST */
-
-#ifdef HAVE_WOLFSSL_BENCHMARK
-               "\t-b Run wolfCrypt benchmarks in enclave\n"
-#endif /* HAVE_WOLFSSL_BENCHMARK */
+               "\t-d Regular run\n"
+               "\t-l Latency evaluation\n"
+               "\t-t Throughput evaluation\n"
                );
         return 0;
 	}
@@ -70,7 +62,7 @@ int main(int argc, char* argv[]) /* not using since just testing w/ wc_test */
     memset(t, 0, sizeof(sgx_launch_token_t));
     memset(&args,0,sizeof(args));
 
-	ret = sgx_create_enclave(ENCLAVE_FILENAME, DEBUG_VALUE, &t, &updated, &id, NULL);
+    ret = sgx_create_enclave(ENCLAVE_FILENAME, DEBUG_VALUE, &t, &updated, &id, NULL);
 	if (ret != SGX_SUCCESS) {
 		printf("Failed to create Enclave : error %d - %#x.\n", ret, ret);
 		return 1;
@@ -78,14 +70,17 @@ int main(int argc, char* argv[]) /* not using since just testing w/ wc_test */
 
 
     switch(argv[1][1]) {
-        case 'c':
-            printf("Client Test:\n");
-            client_connect(id);
+        case 'l':
+            printf("Latency evaluation:\n");
+            server_connect(id, EVAL_LATENCY);
             break;
-
-        case 's':
-            printf("Server Test:\n");
-            server_connect(id);
+        case 't':
+            printf("Throughput evaluation:\n");
+            server_connect(id, EVAL_THROUGHPUT);
+            break;
+        case 'd':
+            printf("Default run:\n");
+            server_connect(id, NO_EVAL);
             break;
 
 #ifdef HAVE_WOLFSSL_TEST

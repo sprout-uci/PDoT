@@ -43,3 +43,6 @@ patch < ias-ra.patch || exit 1
 popd
 
 popd
+
+./download_prebuilt.sh
+sudo cp external/toolset/{as,ld,ld.gold,objdump} /usr/local/bin

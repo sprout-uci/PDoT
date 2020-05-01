@@ -4,9 +4,12 @@
 
 # Make a copy of normal-stubby.yml and use sed to replace the port number
 echo "Generating config files..."
+echo "Provide IP address of machine that is running Unbound:"
+read IP_ADDR
 for i in $(seq 53 $1)
 do
-    cp ../normal-stubby.yml normal-stubby-$i.yml
-    sed -i "s/53/$i/" normal-stubby-$i.yml
+    cp ../unbound-stubby-template.yml unbound-stubby-$i.yml
+    sed -i "s/53/$i/" unbound-stubby-$i.yml
+    sed -i "s/address_data:/address_data: $IP_ADDR/" unbound-stubby-$i.yml
 done
 echo "Done"

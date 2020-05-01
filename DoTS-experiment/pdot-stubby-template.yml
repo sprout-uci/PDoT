@@ -10,8 +10,7 @@ listen_addresses:
   - 127.0.0.1@53
   - 0::1@53
 upstream_recursive_servers:
-  - address_data: 128.195.4.71
+  - address_data:
     tls_port: 11111
-    tls_pubkey_pinset:
-      - digest: "sha256"
-        value: Wz7+8IantGN7KEPQqPtcXnvx5AtJ4YIYQHf0sUBe3c0=
+    sgx_mr_enclave_set:
+      - value:

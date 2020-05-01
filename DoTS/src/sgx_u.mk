@@ -57,8 +57,8 @@ endif
 
 
 
-App_C_Files := $(UNTRUSTED_DIR)/App.c $(UNTRUSTED_DIR)/client-tls.c $(UNTRUSTED_DIR)/server-tls.c $(UNTRUSTED_DIR)/sgxsdk-ra-attester_u.c $(UNTRUSTED_DIR)/ias-ra.c $(UNTRUSTED_DIR)/dns_u.c
-App_Include_Paths := $(Wolfssl_Include_Paths) -I$(UNTRUSTED_DIR) -I$(SGX_SDK)/include -I$(SGX_RA_TLS_ROOT) -I../deps/local/include
+App_C_Files := $(UNTRUSTED_DIR)/App.c $(UNTRUSTED_DIR)/server-tls.c $(UNTRUSTED_DIR)/sgxsdk-ra-attester_u.c $(UNTRUSTED_DIR)/ias-ra.c $(UNTRUSTED_DIR)/dns_u.c
+App_Include_Paths := $(Wolfssl_Include_Paths) -I$(UNTRUSTED_DIR) -I$(SGX_SDK)/include -I$(SGX_RA_TLS_ROOT) -I../deps/local/include -Icommon
 
 App_C_Flags := $(SGX_COMMON_CFLAGS) -fPIC -Wno-attributes $(App_Include_Paths) $(Wolfssl_C_Extra_Flags)
 
@@ -74,7 +74,8 @@ else
         App_C_Flags += -DNDEBUG -UEDEBUG -UDEBUG
 endif
 
-App_Link_Flags := $(SGX_COMMON_CFLAGS) -L$(SGX_LIBRARY_PATH) -L../deps/local/lib -l$(Urts_Library_Name) -lpthread -lssl -lcrypto -lcurl ../deps/local/lib/libwolfssl.a -lz -lm
+App_Link_Flags := $(SGX_COMMON_CFLAGS) -L$(SGX_LIBRARY_PATH) \
+				  -L../deps/local/lib -l$(Urts_Library_Name) -lpthread -lssl -lcrypto -lcurl ../deps/local/lib/libwolfssl.a -lz -lm
 
 ifneq ($(SGX_MODE), HW)
 	App_Link_Flags += -lsgx_epid_sim -lsgx_quote_ex_sim

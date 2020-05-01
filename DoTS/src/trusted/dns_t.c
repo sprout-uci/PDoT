@@ -5838,34 +5838,34 @@ struct dns_hints *dns_hints_mortal(struct dns_hints *hints) {
 } /* dns_hints_mortal() */
 
 
-// struct dns_hints *dns_hints_local(struct dns_resolv_conf *resconf, int *error_) {
-// 	struct dns_hints *hints		= 0;
-// 	int error;
+struct dns_hints *dns_hints_local(struct dns_resolv_conf *resconf, int *error_) {
+	struct dns_hints *hints		= 0;
+	int error;
 
-// 	if (resconf)
-// 		dns_resconf_acquire(resconf);
-// 	else if (!(resconf = dns_resconf_local(&error)))
-// 		goto error;
+	if (resconf)
+		dns_resconf_acquire(resconf);
+	// else if (!(resconf = dns_resconf_local(&error)))
+	// 	goto error;
 
-// 	if (!(hints = dns_hints_open(resconf, &error)))
-// 		goto error;
+	if (!(hints = dns_hints_open(resconf, &error)))
+		goto error;
 
-// 	error	= 0;
+	error	= 0;
 
-// 	if (0 == dns_hints_insert_resconf(hints, ".", resconf, &error) && error)
-// 		goto error;
+	if (0 == dns_hints_insert_resconf(hints, ".", resconf, &error) && error)
+		goto error;
 
-// 	dns_resconf_close(resconf);
+	dns_resconf_close(resconf);
 
-// 	return hints;
-// error:
-// 	*error_	= error;
+	return hints;
+error:
+	*error_	= error;
 
-// 	dns_resconf_close(resconf);
-// 	dns_hints_close(hints);
+	dns_resconf_close(resconf);
+	dns_hints_close(hints);
 
-// 	return 0;
-// } /* dns_hints_local() */
+	return 0;
+} /* dns_hints_local() */
 
 
 struct dns_hints *dns_hints_root(struct dns_resolv_conf *resconf, int *error_) {
@@ -6904,7 +6904,7 @@ retry:
 
 		so->state++;
 	case DNS_SO_TCP_CONN:
-		sgxStatus = ocall_connect(&ret, so->udp, (struct sockaddr *)&so->remote, dns_sa_len(&so->remote));
+		sgxStatus = ocall_connect(&ret, so->tcp, (struct sockaddr *)&so->remote, dns_sa_len(&so->remote));
 		if (0 != ret) {
 			if (dns_soerr() != DNS_EISCONN)
 				goto soerr;
@@ -8034,17 +8034,17 @@ exec:
 
 	return 0;
 noquery:
-	// printf("dns_res_exec noquery\n");
+	printf("dns_res_exec noquery\n");
 	error = DNS_ENOQUERY;
 
 	goto error;
 noanswer:
-	// printf("dns_res_exec noanswer\n");
+	printf("dns_res_exec noanswer\n");
 	error = DNS_ENOANSWER;
 
 	goto error;
 toolong:
-	// printf("dns_res_exec toolong\n");
+	printf("dns_res_exec toolong\n");
 	error = DNS_EILLEGAL;
 
 	/* FALL THROUGH */

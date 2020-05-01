@@ -55,7 +55,7 @@ Wolfssl_Enclave_C_Files := trusted/Wolfssl_Enclave.c trusted/dns_t.c
 Wolfssl_Enclave_Include_Paths := -IInclude -Itrusted $(Wolfssl_Include_Paths)\
 								 -I$(SGX_SDK)/include -I$(SGX_SDK)/include/tlibc\
 								 -I$(SGX_SDK)/include/stlport -I$(SGX_SDK)/lib64\
-								 -I$(SGX_RA_TLS_ROOT)
+								 -I$(SGX_RA_TLS_ROOT) -Icommon
 
 ifeq ($(HAVE_WOLFSSL_TEST), 1)
 	Wolfssl_Include_Paths += -I$(WOLFSSL_ROOT)/wolfcrypt/test/
@@ -65,6 +65,10 @@ endif
 ifeq ($(HAVE_WOLFSSL_BENCHMARK), 1)
 	Wolfssl_Include_Paths += -I$(WOLFSSL_ROOT)/wolfcrypt/benchmark/
 	Wolfssl_C_Extra_Flags += -DHAVE_WOLFSSL_BENCHMARK
+endif
+
+ifeq ($(DEBUG_DOTS), 1)
+    SGX_COMMON_CFLAGS += -DDEBUG_DOTS
 endif
 
 

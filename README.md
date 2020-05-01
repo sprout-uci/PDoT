@@ -32,33 +32,48 @@ source /opt/intel/sgxsdk/environment
 
 ## Download the necessary dependencies:
 ```bash
-sudo apt install build-essential libunbound-dev libssl-dev libtool m4 autoconf libyaml-dev
+sudo apt install build-essential libunbound-dev libssl-dev libtool m4 autoconf libyaml-dev cmake libexpat1-dev check python3-pip
+pip3 install dnspython matplotlib numpy
 cd DoTS
 ./get_deps.sh
 ```
 
 ## Add Intel Attestation Service (IAS) credentials
-IAS credentials are required to run PDoT. Obtain the credentials [here](https://api.portal.trustedservices.intel.com/EPID-attestation).
+IAS credentials are required to run PDoT.
+Obtain the credentials [here](https://api.portal.trustedservices.intel.com/EPID-attestation).
+Sign up and subscribe to the `linkable` development access.
+Click your name in the up-right corner and click `Manage Subscriptions`.
+You will need `SPID` and `Primary key (EPID_SUBSCRIPTION_KEY)` for the credentials.
 
-After collecting the credentials,
- - Copy IAS client certificate to: `src/ias-client-cert.pem`
- - Copy IAS client key to: `src/ias-client-key.pem`
- - Set SPID in `deps/sgx-ra-tls/ra_tls_options.c`
+After collecting the credentials, run:
+```bash
+cd deps/sgx-ra-tls
+SPID={} EPID_SUBSCRIPTION_KEY={} QUOTE_TYPE=SGX_LINKABLE_SIGNATURE bash ra_tls_options.c.sh > ra_tls_options.c
+```
+Replace `{}` with the credentials you obtained.
 
 ## Build the various dependencies:
 ```bash
+cd ../../
 ./build_deps.sh
+```
+
+## Generate private key to sign Enclave:
+```bash
+cd src
+openssl genpkey -algorithm RSA -out trusted/Wolfssl_Enclave_private.pem -pkeyopt rsa_keygen_bits:3072 -pkeyopt rsa_keygen_pubexp:3
 ```
 
 ## Build the server:
 ```bash
-cd src
 make SGX_MODE=HW SGX_DEBUG=1
 ```
 
 ## Run the PDoT server:
 ```bash
-./App -s
+./App -d # for normal use
+./App -l # for latency evaluation
+./App -t # for throughput evaluation
 ```
 `V1`: Copy the value shown after the prompt `MRENCLAVE`.
 
