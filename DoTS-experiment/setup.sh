@@ -37,6 +37,7 @@ cd $EVAL_DIR
 if [ ! -d "getdns" ]; then
     git clone https://github.com/getdnsapi/getdns.git
     cd getdns
+    git checkout v1.4.2
     git submodule update --init
     mkdir build
     cd build

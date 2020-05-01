@@ -27,14 +27,14 @@ sed -i "s/address_data:/address_data: 127.0.0.1/" unbound-latency-stubby.yml
 cd $BIN_DIR
 echo "Running PDoT..."
 ./App -l > /dev/null 2>&1 &
-sleep 3
+sleep 5
 echo "Running stubby..."
 echo "Running DoTS measurement (cold start)..."
 for i in $(seq 0 999)
 do
   cd $BIN_DIR
   sudo -b ./pdot-stubby -C pdot-latency-stubby.yml -g > /dev/null 2>&1 &
-  sleep 2
+  sleep 1
   cd $EVAL_DIR
   ./latency.py dots cold $i
   sudo pkill stubby
@@ -54,6 +54,8 @@ done
 echo "Cleaning up DoTS measurement..."
 sudo pkill stubby
 sudo pkill App
+cd $BIN_DIR
+sudo rm -r .libs/ # remove temporary directory used by stubby
 
 sleep 3
 
@@ -61,14 +63,14 @@ sleep 3
 echo "Running unbound..."
 cd $BIN_DIR
 ./unbound -c ../unbound.conf
-sleep 3
+sleep 5
 echo "Running stubby..."
 echo "Running unbound measurement (cold start)..."
 for i in $(seq 0 999)
 do
   cd $BIN_DIR
   sudo -b ./unbound-stubby -C unbound-latency-stubby.yml -g > /dev/null 2>&1 &
-  sleep 2
+  sleep 1
   cd $EVAL_DIR
   ./latency.py unbound cold $i
   sudo pkill stubby
@@ -88,3 +90,5 @@ done
 echo "Cleaning up unbound measurement..."
 sudo pkill stubby
 sudo pkill unbound
+cd $BIN_DIR
+sudo rm -r .libs/ # remove temporary directory used by stubby
