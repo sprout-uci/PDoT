@@ -22,11 +22,11 @@ enclave {
         public int enc_wolfSSL_is_init_finished([user_check]WOLFSSL* ssl);
         public int enc_mutex_init(void);
         public int enc_mutex_destroy(void);
-        public int enc_wolfSSL_read_from_client([user_check]WOLFSSL_CTX* ctx, int connd, int idx) transition_using_threads;
+        public int enc_wolfSSL_read_from_client([user_check]WOLFSSL_CTX* ctx, [user_check]int* connd, int idx) transition_using_threads;
         public int enc_wolfSSL_write_to_client(int idx) transition_using_threads;
         public int enc_wolfSSL_process_query(int tid) transition_using_threads;
         // public int enc_wolfSSL_read_from_client([user_check]WOLFSSL_CTX* ctx, int connd, int idx);
-        // public int enc_wolfSSL_write_to_client(int idx);
+        // public int enc_wolfSSL_write_to_client(int idx, [user_check]int* connds);
         // public int enc_wolfSSL_process_query(int tid);
         public void enc_wolfSSL_free([user_check]WOLFSSL* ssl);
         public void enc_wolfSSL_CTX_free([user_check]WOLFSSL_CTX* ctx);

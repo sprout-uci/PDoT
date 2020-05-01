@@ -67,8 +67,8 @@ ifeq ($(HAVE_WOLFSSL_BENCHMARK), 1)
 	Wolfssl_C_Extra_Flags += -DHAVE_WOLFSSL_BENCHMARK
 endif
 
-ifeq ($(DEBUG_DOTS), 0)
-    Wolfssl_C_Extra_Flags += -DDEBUG_DOTS
+ifeq ($(DEBUG_DOTS), 1)
+    SGX_COMMON_CFLAGS += -DDEBUG_DOTS
 endif
 
 
