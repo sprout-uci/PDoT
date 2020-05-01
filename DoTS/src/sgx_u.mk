@@ -75,7 +75,6 @@ else
 endif
 
 App_Link_Flags := $(SGX_COMMON_CFLAGS) -L$(SGX_LIBRARY_PATH) \
-				  -Wl,--whole-archive -lsgx_uswitchless -Wl,--no-whole-archive \
 				  -L../deps/local/lib -l$(Urts_Library_Name) -lpthread -lssl -lcrypto -lcurl ../deps/local/lib/libwolfssl.a -lz -lm
 
 ifneq ($(SGX_MODE), HW)
