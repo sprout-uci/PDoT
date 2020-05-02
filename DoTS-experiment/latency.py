@@ -41,7 +41,7 @@ if setting == 'cold':
         total_time = time.time() - start
         #print(total_time)
         fo.write("," + str(total_time))
-    if int(sys.argv[3])%100 == 99:
+    if int(sys.argv[3])%10 == 9:
         fo.write("\n")
 elif setting == 'warm':
     r = dns.message.make_query('bbc.com', dns.rdatatype.A)
