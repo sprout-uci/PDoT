@@ -311,7 +311,7 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
     }
 
     /* Listen for a new connection, allow 5 pending connections */
-    if (listen(sockfd, 5) == -1) {
+    if (listen(sockfd, MAX_CONCURRENT_THREADS) == -1) {
         fprintf(stderr, "ERROR: failed to listen\n");
         return -1;
     }
