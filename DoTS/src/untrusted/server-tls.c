@@ -65,8 +65,6 @@ struct dns_hints *hints;
 WOLFSSL_CTX* ctx;
 WOLFSSL_METHOD* method;
 
-int connds[MAX_CONCURRENT_THREADS];
-
 /* Thread argument package */
 struct qtarg_pkg {
     pthread_t tid;
@@ -79,6 +77,8 @@ struct ctarg_pkg {
     pthread_t rtid;
     pthread_t wtid;
     int       sgx_id;
+    int       connd;
+    int       open;
     int       t_count;
 };
 
@@ -150,14 +150,16 @@ void* ClientReader(void* args)
     int               sgxStatus;
     int               ret;
 
-    sgxStatus = enc_wolfSSL_read_from_client(pkg->sgx_id, &ret, ctx, &(connds[pkg->t_count]), pkg->t_count);
+    sgxStatus = enc_wolfSSL_read_from_client(pkg->sgx_id, &ret, ctx, pkg->connd, pkg->t_count);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
         printf("Server failed to read from client\n");
+        pkg->open = 1;
         pthread_exit(NULL);
     }
 
     /* Cleanup after this connection */
     // printf("Clean up ClientHandler\n");
+    pkg->open = 1;
     pthread_exit(NULL);
 }
 
@@ -174,7 +176,8 @@ void* ClientWriter(void* args)
 
     /* Cleanup after this connection */
     // printf("Clean up ClientHandler\n");
-    // close(pkg->connd);           /* Close the connection to the client   */
+    close(pkg->connd);           /* Close the connection to the client   */
+    pkg->open = 1;
     pthread_exit(NULL);
 }
 
@@ -211,10 +214,6 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
     struct qtarg_pkg queryThread[MAX_CONCURRENT_THREADS];
     int clientIdx;
     int queryIdx;
-
-    for (int i = 0; i < MAX_CONCURRENT_THREADS; i++) {
-        connds[i] = -1;
-    }
 
     /* Initialize wolfSSL */
     enc_wolfSSL_Init(id, &sgxStatus);
@@ -325,16 +324,7 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
     for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS; clientIdx++) {
         clientThread[clientIdx].t_count = clientIdx;
         clientThread[clientIdx].sgx_id = id;
-
-        /* Launch a reader thread to deal with the new client */
-        pthread_create(&clientThread[clientIdx].rtid, NULL, ClientReader, &clientThread[clientIdx]);
-        /* State that we won't be joining this thread */
-        pthread_detach(clientThread[clientIdx].rtid);
-
-        /* Launch a writer thread to deal with the new client */
-        pthread_create(&clientThread[clientIdx].wtid, NULL, ClientWriter, &clientThread[clientIdx]);
-        /* State that we won't be joining this thread */
-        pthread_detach(clientThread[clientIdx].wtid);
+        clientThread[clientIdx].open = 1;
     }
 
     for (int i = 0; i < QUERY_HANDLE_THREADS; i++) {
@@ -359,19 +349,35 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
         }
         
         if (connd > 0) {
-            for (clientIdx = 0; (clientIdx < MAX_CONCURRENT_THREADS) && (connds[clientIdx] > 0); clientIdx++);
+            for (clientIdx = 0; (clientIdx < MAX_CONCURRENT_THREADS) && !clientThread[clientIdx].open; clientIdx++);
             if (clientIdx == MAX_CONCURRENT_THREADS) {
                 printf("Exceeded max number of threads!\n");
                 continue;
             }
-            /* Fill out the relevent thread argument package information */
-            connds[clientIdx] = connd;
+            clientThread[clientIdx].connd = connd;
+            clientThread[clientIdx].open = 0;
+
+            /* Launch a reader thread to deal with the new client */
+            pthread_create(&clientThread[clientIdx].rtid, NULL, ClientReader, &clientThread[clientIdx]);
+            /* State that we won't be joining this thread */
+            pthread_detach(clientThread[clientIdx].rtid);
+
+            /* Launch a writer thread to deal with the new client */
+            pthread_create(&clientThread[clientIdx].wtid, NULL, ClientWriter, &clientThread[clientIdx]);
+            /* State that we won't be joining this thread */
+            pthread_detach(clientThread[clientIdx].wtid);
         }
 
     }
 
     do {
         shutdwn = 1;
+        for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS; ++clientIdx) {
+            if (!clientThread[clientIdx].open) {
+                clientThread[clientIdx].open = 1;
+                shutdwn = 0;
+            }
+        }
     } while (!shutdwn);
 
     /* Cleanup and return */
