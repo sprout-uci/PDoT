@@ -452,6 +452,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
             } else if (inQueryList->head == NULL || inQueryList->tail == NULL) {
                 // Something is wrong.
                 eprintf("[ClientReader %i] Failed to add query to QueryBuffer.\n", idx);
+                free(query);
                 free(queryBuffer);
                 outQueryLists[idx]->reader_writer_sig = 0;
                 if (sgx_thread_mutex_unlock(in_mutex) != 0) {
@@ -469,6 +470,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
             printf("[ClientReader %i] Unlock in_head_mutex and in_tail_mutex\n", idx);
             if (sgx_thread_mutex_unlock(in_mutex) != 0) {
                 eprintf("[ClientReader %i] Failed to unlock mutex.\n", idx);
+                free(query);
                 free(queryBuffer);
                 outQueryLists[idx]->reader_writer_sig = 0;
                 ret = -1;
@@ -538,7 +540,6 @@ int enc_wolfSSL_process_query(int tid)
         if (sgx_thread_mutex_unlock(in_mutex) != 0) {
             eprintf("[QueryHandle  %i] Failed to unlock mutex.\n", tid);
             free(qB->query);
-            wolfSSL_free(qB->ssl);
             free(ans);
             free(qB);
             return -1;
@@ -550,7 +551,6 @@ int enc_wolfSSL_process_query(int tid)
             printf("[QueryHandle  %i] connection to %i has ended.\n", tid, qB->idx);
             free(ans);
             free(qB->query);
-            wolfSSL_free(qB->ssl);
             free(qB);
             continue;
         }
@@ -561,7 +561,6 @@ int enc_wolfSSL_process_query(int tid)
         if (ans == NULL){
             eprintf("[QueryHandle  %i] Failed to resolve query.\n", tid);
             free(qB->query);
-            wolfSSL_free(qB->ssl);
             free(ans);
             free(qB);
             continue;
@@ -584,7 +583,6 @@ int enc_wolfSSL_process_query(int tid)
             if (cleanupSet[tid]->query_processer_sig == 0) {
                 cleanupSet[tid]->cleanup_finished = 1;
                 free(ans);
-                wolfSSL_free(qB->ssl);
                 free(qB);
                 break;
             }
