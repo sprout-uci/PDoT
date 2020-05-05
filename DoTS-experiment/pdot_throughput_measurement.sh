@@ -18,7 +18,7 @@ case ${option} in
     for i in $(seq $START_PORT $END_PORT)
     do
       #echo "Running stubby with dots-stubby-$i.yml"
-      nohup sudo -b ./pdot-stubby -C $EVAL_DIR/dots-config/pdot-stubby-${i}.yml > /dev/null 2>&1 &
+      nohup sudo -b ./stubby -C $EVAL_DIR/dots-config/pdot-stubby-${i}.yml > /dev/null 2>&1 &
       sleep 1 
     done
     sleep 3 
@@ -39,7 +39,7 @@ case ${option} in
       for i in $(seq $START_PORT $END_PORT)
       do
         #echo "Running stubby with dots-stubby-$i.yml"
-        nohup sudo -b ./pdot-stubby -C $EVAL_DIR/dots-config/pdot-stubby-${i}.yml > /dev/null 2>&1 &
+        nohup sudo -b ./stubby -C $EVAL_DIR/dots-config/pdot-stubby-${i}.yml > /dev/null 2>&1 &
         sleep 1 
       done
       sleep 3 
@@ -64,7 +64,7 @@ case ${option} in
       for i in $(seq $START_PORT $END_PORT)
       do
         #echo "Running stubby with dots-stubby-$i.yml"
-        nohup sudo -b ./pdot-stubby -C $EVAL_DIR/dots-config/pdot-stubby-${i}.yml > /dev/null 2>&1 &
+        nohup sudo -b ./stubby -C $EVAL_DIR/dots-config/pdot-stubby-${i}.yml > /dev/null 2>&1 &
         sleep 1 
       done
       sleep 3 
