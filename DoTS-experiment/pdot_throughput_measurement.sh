@@ -6,7 +6,7 @@ START_PORT=53
 
 ROOT_DIR=$PWD/..
 EVAL_DIR=$ROOT_DIR/DoTS-experiment
-BIN_DIR=$ROOT_DIR/DoTS-experiment/bin
+PDOT_STUBBY_DIR=$ROOT_DIR/getdns-with-ratls/build/src
 
 option="${1}"
 case ${option} in
@@ -14,7 +14,7 @@ case ${option} in
     END_PORT=$2
     echo "Running experiment for one time..."
     #echo "Running stubby..."
-    cd $BIN_DIR
+    cd $PDOT_STUBBY_DIR
     for i in $(seq $START_PORT $END_PORT)
     do
       #echo "Running stubby with dots-stubby-$i.yml"
@@ -35,7 +35,7 @@ case ${option} in
     do
       echo "Experiment for $(($END_PORT-$START_PORT+1)) clients:"
       #echo "Running stubby..."
-      cd $BIN_DIR
+      cd $PDOT_STUBBY_DIR
       for i in $(seq $START_PORT $END_PORT)
       do
         #echo "Running stubby with dots-stubby-$i.yml"
@@ -60,7 +60,7 @@ case ${option} in
     for j in $(seq 5 5 100)
     do
       #echo "Running stubby..."
-      cd $BIN_DIR
+      cd $PDOT_STUBBY_DIR
       for i in $(seq $START_PORT $END_PORT)
       do
         #echo "Running stubby with dots-stubby-$i.yml"
