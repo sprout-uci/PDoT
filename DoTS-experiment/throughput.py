@@ -21,7 +21,7 @@ def endCall(return_val):
 
 
 if __name__ == '__main__':
-    domain = 'google.com'      # which URL we are using to create DNS queries
+    domain = 'example.com'      # which URL we are using to create DNS queries
     rr_name = sys.argv[1]      # which Recursive Resolver we're using
     port = int(sys.argv[2])    # which port we're using
     clients = int(sys.argv[4]) # number of clients
