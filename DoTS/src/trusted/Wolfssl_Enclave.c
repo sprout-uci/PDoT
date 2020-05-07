@@ -785,7 +785,9 @@ int enc_wolfSSL_Cleanup(void)
     // TODO: Broadcast a signal to the QueryHandler threads to wake them up.
     for (int i=0; i < QUERY_HANDLE_THREADS; i++) {
         cleanupSet[i]->query_processer_sig = 0;
-        while (cleanupSet[i]->cleanup_finished != 1) {}
+        while (cleanupSet[i]->cleanup_finished != 1) {
+            sgx_thread_cond_broadcast(in_cond);
+        }
     }
     // TODO: Stop ClientReader and ClientWriter threads too.
     printf("clean inQueryList\n");
