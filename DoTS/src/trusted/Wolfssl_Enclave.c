@@ -782,6 +782,7 @@ void enc_wolfSSL_CTX_free(WOLFSSL_CTX* ctx)
 int enc_wolfSSL_Cleanup(void)
 {
     printf("stop QueryHandler threads\n");
+    // TODO: Broadcast a signal to the QueryHandler threads to wake them up.
     for (int i=0; i < QUERY_HANDLE_THREADS; i++) {
         cleanupSet[i]->query_processer_sig = 0;
         while (cleanupSet[i]->cleanup_finished != 1) {}

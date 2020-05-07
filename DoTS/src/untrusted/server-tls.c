@@ -153,8 +153,6 @@ void* ClientReader(void* args)
     sgxStatus = enc_wolfSSL_read_from_client(pkg->sgx_id, &ret, ctx, pkg->connd, pkg->t_count);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
         printf("Server failed to read from client\n");
-        pkg->open = 1;
-        pthread_exit(NULL);
     }
 
     /* Cleanup after this connection */
@@ -211,7 +209,20 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
 
     /* declare thread variable */
     struct ctarg_pkg clientThread[MAX_CONCURRENT_THREADS];
-    struct qtarg_pkg queryThread[MAX_CONCURRENT_THREADS];
+    for (int i=0; i < MAX_CONCURRENT_THREADS; i++) {
+        clientThread[i].rtid    = 0;
+        clientThread[i].wtid    = 0;
+        clientThread[i].sgx_id  = 0;
+        clientThread[i].connd   = 0;
+        clientThread[i].open    = 0;
+        clientThread[i].t_count = 0;
+    }
+    struct qtarg_pkg queryThread[QUERY_HANDLE_THREADS];
+    for (int i=0; i < QUERY_HANDLE_THREADS; i++) {
+        queryThread[i].tid     = 0;
+        queryThread[i].sgx_id  = 0;
+        queryThread[i].t_count = 0;
+    }
     int clientIdx;
     int queryIdx;
 
