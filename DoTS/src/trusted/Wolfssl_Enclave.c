@@ -521,8 +521,7 @@ int enc_wolfSSL_process_query(int tid)
         printf("[QueryHandle  %i] found head\n", tid);
 
         // Initialize resconf and hosts
-        struct dns_packet *ans = (struct dns_packet *) malloc(sizeof(struct dns_packet));
-        memset(ans, 0, sizeof(struct dns_packet));
+        struct dns_packet *ans;
         struct QueryBuffer* qB = inQueryList->head;
         int ret = 0;
 
