@@ -513,6 +513,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
         } else {
             printf("[ClientReader %i] wolfSSL_read failed\n", idx);
             outQueryLists[idx]->reader_writer_sig = 0;
+            sgx_thread_cond_broadcast(outQueryLists[idx]->out_cond);
             break;
         }
     }
@@ -691,6 +692,18 @@ int enc_wolfSSL_write_to_client(int idx)
     int ret = 0;
     outQueryLists[idx]->reader_writer_sig = 1;
 
+    // Clean outQueryList if there are any leftovers from last client.
+    if (outQueryLists[idx]->head != NULL) {
+        while (sgx_thread_mutex_trylock(outQueryLists[idx]->out_mutex) != 0) {}
+        while (outQueryLists[idx]->head != NULL) {
+            struct QueryBuffer* tmp = outQueryLists[idx]->head;
+            outQueryLists[idx]->head = tmp->next;
+            free(tmp);
+        }
+        outQueryLists[idx]->tail = NULL;
+        sgx_thread_mutex_unlock(outQueryLists[idx]->out_mutex);
+    }
+
     while (1) {
         /////////////////////////////
         // SEND RESPONSE TO CLIENT //
@@ -706,6 +719,11 @@ int enc_wolfSSL_write_to_client(int idx)
 
         // This client has been disconnected.
         if (outQueryLists[idx]->reader_writer_sig == 0) {
+            // Unlock mutex
+            if (sgx_thread_mutex_unlock(outQueryLists[idx]->out_mutex) != 0) {
+                eprintf("[ClientWriter %i] Failed to unlock mutex.\n", idx);
+                return -1;
+            }
             break;
         }
 
@@ -732,9 +750,6 @@ int enc_wolfSSL_write_to_client(int idx)
             outQueryLists[idx]->tail = NULL;
         }
 
-        printf("[ClientWriter %i] clean up qB\n", idx);
-        free(qB);
-
         // Unlock mutex
         printf("[ClientWriter %i] unlock mutex\n", idx);
         if (sgx_thread_mutex_unlock(outQueryLists[idx]->out_mutex) != 0) {
@@ -759,6 +774,9 @@ int enc_wolfSSL_write_to_client(int idx)
         }
         printf("[ClientWriter %i] clean up ans\n", idx);
         free(ans);
+
+        printf("[ClientWriter %i] clean up qB\n", idx);
+        free(qB);
     }
 
     printf("[ClientWriter %i] Free up some stuff\n", idx);
@@ -791,15 +809,12 @@ int enc_wolfSSL_Cleanup(void)
     }
     // TODO: Stop ClientReader and ClientWriter threads too.
     printf("clean inQueryList\n");
-    int counter = 0;
     while(inQueryList->head != NULL && sgx_thread_mutex_trylock(in_mutex) == 0) {
         struct QueryBuffer* tmp = inQueryList->head;
         inQueryList->head = tmp->next;
         sgx_thread_mutex_unlock(in_mutex);
         free(tmp);
-        counter++;
     }
-    counter = 0;
     printf("clean outQueryList\n");
     for (int i = 0; i < MAX_CONCURRENT_THREADS; i++) {
         while(outQueryLists[i]->head != NULL && sgx_thread_mutex_trylock(outQueryLists[i]->out_mutex) == 0) {
@@ -807,7 +822,6 @@ int enc_wolfSSL_Cleanup(void)
             outQueryLists[i]->head = tmp->next;
             sgx_thread_mutex_unlock(outQueryLists[i]->out_mutex);
             free(tmp);
-            counter++;
         }
     }
     free(inQueryList);
