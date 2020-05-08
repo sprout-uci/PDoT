@@ -521,6 +521,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
     printf("[ClientReader %i] Free up some stuff\n", idx);
     free(ssl_buffer);
     wolfSSL_free(ssl);
+    ssl = NULL;
 
     return ret;
 }
@@ -581,7 +582,6 @@ int enc_wolfSSL_process_query(int tid)
         if (sgx_thread_mutex_unlock(in_mutex) != 0) {
             eprintf("[QueryHandle  %i] Failed to unlock mutex.\n", tid);
             free(qB->query);
-            free(ans);
             free(qB);
             return -1;
         }
@@ -590,7 +590,12 @@ int enc_wolfSSL_process_query(int tid)
         if (outQueryLists[qB->idx]->reader_writer_sig == 0) {
             // Connection to this client has ended.
             printf("[QueryHandle  %i] connection to %i has ended.\n", tid, qB->idx);
-            free(ans);
+            free(qB->query);
+            free(qB);
+            continue;
+        }
+        if (qB->ssl == NULL || wolfSSL_get_shutdown(qB->ssl) == 1 || wolfSSL_get_shutdown(qB->ssl) == 2) {
+            eprintf("[QueryHandle  %i] WOLFSSL object is freed.\n", tid);
             free(qB->query);
             free(qB);
             continue;
@@ -602,7 +607,6 @@ int enc_wolfSSL_process_query(int tid)
         if (ans == NULL){
             eprintf("[QueryHandle  %i] Failed to resolve query.\n", tid);
             free(qB->query);
-            free(ans);
             free(qB);
             continue;
         }
@@ -767,10 +771,16 @@ int enc_wolfSSL_write_to_client(int idx)
         memcpy(answer + 2, ans->data, ans->end);
 
         /* Send answer back to client */
+        if (ssl == NULL || wolfSSL_get_shutdown(ssl) == 1 || wolfSSL_get_shutdown(ssl) == 2) {
+            eprintf("[ClientWriter %i] WOLFSSL object is freed.\n", idx);
+            free(ans);
+            free(qB);
+            continue;
+        }
         printf("[ClientWriter %i] send answer with qid: %u\n", idx, ans->header.qid);
         ret = wolfSSL_write(ssl, answer, ans->end + (size_t)2);
         if (ret != (ans->end + (size_t)2)) {
-            eprintf("[ClientWriter %i] ERROR: failed to write. Ret: %i\n", idx, ret);
+            eprintf("[ClientWriter %i] ERROR: failed to write. Ret: %i, Shutdown: %i\n", idx, ret, wolfSSL_get_shutdown(ssl));
         }
         printf("[ClientWriter %i] clean up ans\n", idx);
         free(ans);
