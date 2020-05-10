@@ -460,11 +460,11 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
             queryBuffer->ssl = ssl;
             queryBuffer->connd = connd;
             queryBuffer->next = NULL;
+            queryBuffer->idx = idx;
 
             // Wait until we can lock mutex
             printf("[ClientReader %i] Obtain in_head_mutex and in_tail_mutex\n", idx);
-            while (sgx_thread_mutex_trylock(in_mutex) != 0) {
-            }
+            sgx_thread_mutex_lock(in_mutex);
             // Store QueryBuffer to linked list
             if (inQueryList->head == NULL && inQueryList->tail == NULL) {
                 printf("[ClientReader %i] Adding first elem. to QueryBuffer.\n", idx);
@@ -624,13 +624,15 @@ int enc_wolfSSL_process_query(int tid)
 
         // Wait until we can lock mutex
         printf("[QueryHandle  %i] waiting for mutex...\n", tid);
-        while (sgx_thread_mutex_trylock(outQueryLists[qB->idx]->out_mutex) != 0) {
-            if (cleanupSet[tid]->query_processer_sig == 0) {
-                cleanupSet[tid]->cleanup_finished = 1;
-                free(ans);
-                free(qB);
-                break;
+        sgx_thread_mutex_lock(outQueryLists[qB->idx]->out_mutex);
+        if (cleanupSet[tid]->query_processer_sig == 0) {
+            cleanupSet[tid]->cleanup_finished = 1;
+            free(ans);
+            free(qB);
+            if (sgx_thread_mutex_unlock(outQueryLists[qB->idx]->out_mutex) != 0) {
+                eprintf("[QueryHandle  %i] Failed to unlock mutex.\n", tid);
             }
+            break;
         }
         if (outQueryLists[qB->idx]->reader_writer_sig == 1) {
             // Store QueryBuffer to linked list
@@ -666,6 +668,9 @@ int enc_wolfSSL_process_query(int tid)
             wolfSSL_free(qB->ssl);
             free(ans);
             free(qB);
+            if (sgx_thread_mutex_unlock(outQueryLists[qB->idx]->out_mutex) != 0) {
+                eprintf("[QueryHandle  %i] Failed to unlock mutex.\n", tid);
+            }
             return -1;
         }
 
