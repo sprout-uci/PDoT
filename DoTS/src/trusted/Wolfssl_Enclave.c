@@ -594,12 +594,6 @@ int enc_wolfSSL_process_query(int tid)
             free(qB);
             continue;
         }
-        if (qB->ssl == NULL || wolfSSL_get_shutdown(qB->ssl) == 1 || wolfSSL_get_shutdown(qB->ssl) == 2) {
-            eprintf("[QueryHandle  %i] WOLFSSL object is freed.\n", tid);
-            free(qB->query);
-            free(qB);
-            continue;
-        }
 
         /* Resolve query */
         printf("[QueryHandle  %i] resolve query\n", tid);
@@ -776,12 +770,6 @@ int enc_wolfSSL_write_to_client(int idx)
         memcpy(answer + 2, ans->data, ans->end);
 
         /* Send answer back to client */
-        if (ssl == NULL || wolfSSL_get_shutdown(ssl) == 1 || wolfSSL_get_shutdown(ssl) == 2) {
-            eprintf("[ClientWriter %i] WOLFSSL object is freed.\n", idx);
-            free(ans);
-            free(qB);
-            continue;
-        }
         printf("[ClientWriter %i] send answer with qid: %u\n", idx, ans->header.qid);
         ret = wolfSSL_write(ssl, answer, ans->end + (size_t)2);
         if (ret != (ans->end + (size_t)2)) {
