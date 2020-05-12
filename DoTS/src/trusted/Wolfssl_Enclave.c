@@ -489,7 +489,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
 
             // Signal any QueryHandler thread that a query is ready for resolving
             printf("[ClientReader %i] Send signal to QueryHandler thread\n", idx);
-            if (sgx_thread_cond_broadcast(in_cond) != 0) {
+            if (sgx_thread_cond_signal(in_cond) != 0) {
                 eprintf("[ClientReader %i] Failed to send signal.\n", idx);
                 free(query);
                 free(queryBuffer);
@@ -658,7 +658,7 @@ int enc_wolfSSL_process_query(int tid)
 
         // Signal ClientWriter thread
         printf("[QueryHandle  %i] Signal ClientWriter thread\n", tid);
-        if (sgx_thread_cond_broadcast(outQueryLists[qB->idx]->out_cond) != 0) {
+        if (sgx_thread_cond_signal(outQueryLists[qB->idx]->out_cond) != 0) {
             eprintf("[QueryHandle  %i] Failed to send signal\n", tid);
             wolfSSL_free(qB->ssl);
             free(ans);
