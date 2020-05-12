@@ -464,8 +464,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
 
             // Wait until we can lock mutex
             printf("[ClientReader %i] Obtain in_head_mutex and in_tail_mutex\n", idx);
-            // sgx_thread_mutex_lock(in_mutex);
-            while (sgx_thread_mutex_trylock(in_mutex) != 0) {}
+            sgx_thread_mutex_lock(in_mutex);
             // Store QueryBuffer to linked list
             if (inQueryList->head == NULL && inQueryList->tail == NULL) {
                 printf("[ClientReader %i] Adding first elem. to QueryBuffer.\n", idx);
