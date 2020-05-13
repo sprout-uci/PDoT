@@ -152,7 +152,7 @@ void* ClientReader(void* args)
 
     sgxStatus = enc_wolfSSL_read_from_client(pkg->sgx_id, &ret, ctx, pkg->connd, pkg->t_count);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
-        printf("Server failed to read from client: %i, SGX_STATUS: %i\n", pkg->connd, sgxStatus);
+        printf("Server failed to read from client\n");
     }
 
     /* Cleanup after this connection */
@@ -169,7 +169,7 @@ void* ClientWriter(void* args)
 
     sgxStatus = enc_wolfSSL_write_to_client(pkg->sgx_id, &ret, pkg->t_count);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
-        printf("Server failed to write to client: %i, SGX_STATUS: %i\n", pkg->connd, sgxStatus);
+        printf("Server failed to write to client\n");
     }
 
     /* Cleanup after this connection */
@@ -280,10 +280,10 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
         return -1;
     }
 
-    // if (fcntl(sockfd, F_SETFL, O_NONBLOCK) == -1) {
-    //     fprintf(stderr, "ERROR: failed to set socket options\n");
-    //     return -1;
-    // }
+    if (fcntl(sockfd, F_SETFL, O_NONBLOCK) == -1) {
+        fprintf(stderr, "ERROR: failed to set socket options\n");
+        return -1;
+    }
 
     int enable = 1;
     ret = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
@@ -353,36 +353,37 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
 
         signal(SIGINT, intHandler);
 
-        // Check whether we can have new client
-        for (clientIdx = 0; (clientIdx < MAX_CONCURRENT_THREADS) && !clientThread[clientIdx].open; clientIdx++);
-        if (clientIdx == MAX_CONCURRENT_THREADS) {
-            continue;
-        }
-
         /* Accept client connections */
         if ((connd = accept(sockfd, (struct sockaddr*)&clientAddr, &size))
             == -1) {
             continue;
         }
+        
+        if (connd > 0) {
+            for (clientIdx = 0; (clientIdx < MAX_CONCURRENT_THREADS) && !clientThread[clientIdx].open; clientIdx++);
+            if (clientIdx == MAX_CONCURRENT_THREADS) {
+                printf("Exceeded max number of threads!\n");
+                continue;
+            }
+            clientThread[clientIdx].connd = connd;
+            clientThread[clientIdx].open = 0;
 
-        clientThread[clientIdx].connd = connd;
-        clientThread[clientIdx].open = 0;
+            /* Launch a reader thread to deal with the new client */
+            pthread_create(&clientThread[clientIdx].rtid, NULL, ClientReader, &clientThread[clientIdx]);
+            /* State that we won't be joining this thread */
+            pthread_detach(clientThread[clientIdx].rtid);
 
-        /* Launch a reader thread to deal with the new client */
-        pthread_create(&clientThread[clientIdx].rtid, NULL, ClientReader, &clientThread[clientIdx]);
-        /* State that we won't be joining this thread */
-        pthread_detach(clientThread[clientIdx].rtid);
+            /* Launch a writer thread to deal with the new client */
+            pthread_create(&clientThread[clientIdx].wtid, NULL, ClientWriter, &clientThread[clientIdx]);
+            /* State that we won't be joining this thread */
+            pthread_detach(clientThread[clientIdx].wtid);
+        }
 
-        /* Launch a writer thread to deal with the new client */
-        pthread_create(&clientThread[clientIdx].wtid, NULL, ClientWriter, &clientThread[clientIdx]);
-        /* State that we won't be joining this thread */
-        pthread_detach(clientThread[clientIdx].wtid);
     }
 
-    printf("clean up\n");
     do {
         shutdwn = 1;
-        for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS; clientIdx++) {
+        for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS; ++clientIdx) {
             if (!clientThread[clientIdx].open) {
                 clientThread[clientIdx].open = 1;
                 shutdwn = 0;
