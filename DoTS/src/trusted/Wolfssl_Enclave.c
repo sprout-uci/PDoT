@@ -65,6 +65,9 @@ sgx_thread_mutex_t *in_queue_mutex;
 sgx_thread_mutex_t *in_cond_mutex;
 sgx_thread_cond_t *in_cond;
 
+int num_clients;
+int access_control;
+
 
 void printf(const char *fmt, ...)
 {
@@ -291,6 +294,8 @@ int enc_wolfSSL_Init(void)
         cleanupSet[i]->query_processer_sig = 1;
         cleanupSet[i]->cleanup_finished = 0;
     }
+    num_clients = 0;
+    access_control = 0;
     return wolfSSL_Init();
 }
 
@@ -439,11 +444,30 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
         eprintf("[ClientReader %i] Failed to set FD to WOLFSSL object.\n", idx);
         return ret;
     }
+    // Add 1 to num_clients
+    sgx_thread_mutex_lock(in_queue_mutex);
+    num_clients++;
+    if (sgx_thread_mutex_unlock(in_queue_mutex) != 0) {
+        eprintf("[ClientReader %i] Failed to unlock mutex.\n", idx);
+    }
 
     while (1) {
         /////////////////////////
         // READ CLIENT REQUEST //
         /////////////////////////
+
+        // Wait for our turn.
+        sgx_thread_mutex_lock(in_queue_mutex);
+        if (access_control != idx) {
+            // It's not our turn yet.
+            if (sgx_thread_mutex_unlock(in_queue_mutex) != 0) {
+                eprintf("[ClientReader %i] Failed to unlock mutex.\n", idx);
+            }
+            continue;
+        }
+        if (sgx_thread_mutex_unlock(in_queue_mutex) != 0) {
+            eprintf("[ClientReader %i] Failed to unlock mutex.\n", idx);
+        }
 
         /* Read the client data into our buff array */
         if (wolfSSL_read(ssl, ssl_buffer, TLS_BUFFER_SIZE) > 0) {
@@ -506,6 +530,9 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
                 inQueryList->tail = queryBuffer;
             }
 
+            // Update access_control variable
+            access_control = (access_control + 1) % num_clients;
+
             // Unlock mutex
             printf("[ClientReader %i] Unlock in_head_mutex and in_tail_mutex\n", idx);
             if (sgx_thread_mutex_unlock(in_queue_mutex) != 0) {
@@ -517,19 +544,10 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
                 break;
             }
 
-            sgx_thread_mutex_lock(in_cond_mutex);
             // Signal any QueryHandler thread that a query is ready for resolving
             printf("[ClientReader %i] Send signal to QueryHandler thread\n", idx);
-            if (sgx_thread_cond_signal(in_cond) != 0) {
+            if (sgx_thread_cond_broadcast(in_cond) != 0) {
                 eprintf("[ClientReader %i] Failed to send signal.\n", idx);
-                free(query);
-                free(queryBuffer);
-                outQueryLists[idx]->reader_writer_sig = 0;
-                ret = -1;
-                break;
-            }
-            if (sgx_thread_mutex_unlock(in_cond_mutex) != 0) {
-                eprintf("[ClientReader %i] Failed to unlock mutex.\n", idx);
                 free(query);
                 free(queryBuffer);
                 outQueryLists[idx]->reader_writer_sig = 0;
@@ -552,6 +570,13 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
     free(ssl_buffer);
     wolfSSL_free(ssl);
     ssl = NULL;
+
+    // Subtract 1 from num_clients
+    sgx_thread_mutex_lock(in_queue_mutex);
+    num_clients--;
+    if (sgx_thread_mutex_unlock(in_queue_mutex) != 0) {
+        eprintf("[ClientReader %i] Failed to unlock mutex.\n", idx);
+    }
 
     return ret;
 }
@@ -704,19 +729,8 @@ int enc_wolfSSL_process_query(int tid)
 
         // Signal ClientWriter thread
         printf("[QueryHandle  %i] Signal ClientWriter thread\n", tid);
-        sgx_thread_mutex_lock(outQueryLists[qB->idx]->out_cond_mutex);
         if (sgx_thread_cond_signal(outQueryLists[qB->idx]->out_cond) != 0) {
             eprintf("[QueryHandle  %i] Failed to send signal\n", tid);
-            wolfSSL_free(qB->ssl);
-            free(ans);
-            free(qB);
-            if (sgx_thread_mutex_unlock(outQueryLists[qB->idx]->out_cond_mutex) != 0) {
-                eprintf("[QueryHandle  %i] Failed to unlock mutex.\n", tid);
-            }
-            return -1;
-        }
-        if (sgx_thread_mutex_unlock(outQueryLists[qB->idx]->out_cond_mutex) != 0) {
-            eprintf("[QueryHandle  %i] Failed to unlock mutex.\n", tid);
             wolfSSL_free(qB->ssl);
             free(ans);
             free(qB);
