@@ -14,7 +14,7 @@ def dns_client(q, port, ans_time):
     if r.answer:
         end_time = time.time() - start_time
         ans_time.put_nowait(end_time)
-        print(end_time)
+        # print(end_time)
 
 
 if __name__ == '__main__':
@@ -23,7 +23,7 @@ if __name__ == '__main__':
     port = int(sys.argv[2])    # which port we're using
     rate = float(int(sys.argv[3]))    # rate of queries [queries per second per client]
     clients = int(sys.argv[4]) # number of clients
-    exp_time = 10              # how long we are doing the experiment [s]
+    exp_time = 60              # how long we are doing the experiment [s]
 
     rang = rate * exp_time
     threads = []
