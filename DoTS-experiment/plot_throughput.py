@@ -29,9 +29,7 @@ for i, e in enumerate(eval_names):
             predata = csv.reader(f)
             predata_rates = {}
             for k, row in enumerate(predata):
-                count = int(row[1])
-                rang = map(float, row[2])
-                rate = int(float(row[0])*int(clients))
+                rate = int(float(row[0]))
                 #print(rate, np.max(list(map(float, row[3:]))), np.min(list(map(float, row[3:]))), np.mean(list(map(float, row[3:]))))
                 if np.mean(list(map(float, row[3:]))) < 1:
                     if rate in data and rate not in predata_rates:
