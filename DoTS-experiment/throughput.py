@@ -12,7 +12,7 @@ counter = 0
 ans_time = []
 
 def endCall(return_val):
-    global counter, max_time, min_time
+    global counter
     if return_val.answer:
         end_time = time.time() - id_to_start_time[return_val.id]
         ans_time.append(end_time)
@@ -24,8 +24,8 @@ if __name__ == '__main__':
     domain = 'example.com'      # which URL we are using to create DNS queries
     rr_name = sys.argv[1]      # which Recursive Resolver we're using
     port = int(sys.argv[2])    # which port we're using
+    rate = float(int(sys.argv[3]))    # rate of queries [queries per second per client]
     clients = int(sys.argv[4]) # number of clients
-    rate = float(int(sys.argv[3])/clients)    # rate of queries [q/s], distributed among the clients
     exp_time = 60              # how long we are doing the experiment [s]
 
     rang = rate * exp_time
@@ -45,7 +45,7 @@ if __name__ == '__main__':
         time.sleep(sleep_time)
     pool.close()
     pool.join()
-    print("[Rate %i] received: %i/%i" % (rate, counter, rang))
+    print("[Rate %s] received: %i/%i" % (sys.argv[3], counter, rang))
     fo.write(str(rate))
     fo.write(',' + str(counter))
     fo.write(',' + str(rang))
