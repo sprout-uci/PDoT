@@ -416,7 +416,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
     int ret = 0;
 
     // Allocate 514 byte buffer array
-    char *ssl_buffer = malloc(TLS_BUFFER_SIZE);
+    char ssl_buffer[TLS_BUFFER_SIZE];
     memset(ssl_buffer, 0 , TLS_BUFFER_SIZE);
 
     // Create new WOLFSSL object
@@ -428,8 +428,8 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
         return ret;
     }
     // Set SSL socket to nonblock
-    printf("[ClientReader %i] Set SSL to nonblock.\n", idx);
-    wolfSSL_set_using_nonblock(ssl, 1);
+    // printf("[ClientReader %i] Set SSL to nonblock.\n", idx);
+    // wolfSSL_set_using_nonblock(ssl, 1);
     // Check whether the initialization is finished
     printf("[ClientReader %i] Check whether init is finished.\n", idx);
     ret = wolfSSL_is_init_finished(ssl);
@@ -473,11 +473,6 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
         if (wolfSSL_read(ssl, ssl_buffer, TLS_BUFFER_SIZE) > 0) {
             // Allocate 514 byte buffer array
             char *buffer = ssl_buffer;
-
-            // Extract the qid
-            unsigned qid = 0;
-            memcpy(&qid, buffer + 2, 2);
-            printf("[ClientReader %i] Received query from client with qid: %u\n", idx, qid);
 
             struct Query* query = (struct Query *) malloc(sizeof(struct Query));
             memset(query, 0, sizeof(struct Query));
@@ -567,7 +562,6 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
     }
 
     printf("[ClientReader %i] Free up some stuff\n", idx);
-    free(ssl_buffer);
     wolfSSL_free(ssl);
     ssl = NULL;
 

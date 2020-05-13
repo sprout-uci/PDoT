@@ -6353,7 +6353,7 @@ static void dns_socketclose(int *fd, const struct dns_options *opts) {
 /* Flags to be ORed into the type parameter of socket and socketpair and
    used for the flags parameter of paccept.  */
 #define SOCK_CLOEXEC 02000000
-#define SOCK_NONBLOCK 00004000
+// #define SOCK_NONBLOCK 00004000
 
 #ifndef HAVE_SOCK_CLOEXEC
 #define HAVE_SOCK_CLOEXEC (defined SOCK_CLOEXEC)
