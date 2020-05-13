@@ -161,9 +161,6 @@ void *QueryHandler(void* args) {
     sgxStatus = enc_wolfSSL_process_query(pkg->sgx_id, &ret, pkg->t_count);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
         // printf("Server failed to process query\n");
-    } else if (ret == 0) {
-        printf("QueryHandler %i finished\n", pkg->t_count);
-        pthread_exit(NULL);
     }
     close(pkg->connd);           /* Close the connection to the client   */
     pkg->open = 1;
