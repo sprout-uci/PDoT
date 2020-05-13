@@ -356,6 +356,7 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
         // Check whether we can have new client
         for (clientIdx = 0; (clientIdx < MAX_CONCURRENT_THREADS) && !clientThread[clientIdx].open; clientIdx++);
         if (clientIdx == MAX_CONCURRENT_THREADS) {
+            continue;
         }
 
         /* Accept client connections */
