@@ -28,7 +28,7 @@
 #include <string.h>
 #include <errno.h>
 #include <signal.h>
-#include <time.h>
+#include <sys/time.h>
 
 /* socket includes */
 #include <sys/socket.h>
@@ -75,7 +75,7 @@ struct ctarg_pkg {
     int       t_count;
 };
 
-static volatile int shutdwn = 0;
+static volatile sig_atomic_t stop = 0;
 
 int init_resconf(enum eval_type et) {
     int error = 0;
@@ -134,7 +134,7 @@ int init_hints(_Bool recurse) {
 
 void intHandler(int dummy) {
     printf("\nShutdown command issued!\n");
-    shutdwn = 1;
+    stop = 1;
 }
 
 void* ClientReader(void* args)
@@ -254,7 +254,11 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
     // }
 
     int enable = 1;
+    struct timeval recv_timeout;
+    recv_timeout.tv_sec = 5;
+    recv_timeout.tv_usec = 0;
     ret = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
+    ret = setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &recv_timeout, sizeof(struct timeval));
     assert(ret != -1);
 
     /* Create and initialize WOLFSSL_CTX */
@@ -308,7 +312,7 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
 
     // printf("Waiting for a connection...\n");
 
-    while(!shutdwn) {
+    while(!stop) {
 
         signal(SIGINT, intHandler);
 
@@ -339,15 +343,6 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
     }
 
     printf("clean up\n");
-    do {
-        shutdwn = 1;
-        for (clientIdx = 0; clientIdx < MAX_CONCURRENT_THREADS; clientIdx++) {
-            if (!clientThread[clientIdx].open) {
-                clientThread[clientIdx].open = 1;
-                shutdwn = 0;
-            }
-        }
-    } while (!shutdwn);
 
     /* Cleanup and return */
     sgxStatus = enc_wolfSSL_CTX_free(id, ctx);  /* Free the wolfSSL context object          */
