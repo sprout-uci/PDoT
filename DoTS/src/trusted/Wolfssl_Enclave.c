@@ -396,11 +396,6 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
             // Allocate 514 byte buffer array
             char *buffer = ssl_buffer;
 
-            // Extract the qid
-            unsigned qid = 0;
-            memcpy(&qid, buffer + 2, 2);
-            printf("[ClientReader %i] Received query from client with qid: %u\n", idx, qid);
-
             struct Query* query = (struct Query *) malloc(sizeof(struct Query));
             memset(query, 0, sizeof(struct Query));
 
@@ -488,7 +483,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
         } else {
             printf("[ClientReader %i] wolfSSL_read failed\n", idx);
             queryLists[idx]->reader_writer_sig = 0;
-            sgx_thread_cond_broadcast(queryLists[idx]->cond);
+            sgx_thread_cond_signal(queryLists[idx]->cond);
             break;
         }
     }
@@ -603,6 +598,7 @@ int enc_wolfSSL_process_query(int idx)
 
         free(qB->query);
         free(qB);
+        free(ans);
 
         if (queryLists[idx]->reader_writer_sig == 0) {
             // Unlock mutex
