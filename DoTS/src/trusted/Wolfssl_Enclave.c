@@ -480,7 +480,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
     
             memset(ssl_buffer, 0 , TLS_BUFFER_SIZE);
 
-            ocall_thread_yield();
+            ocall_thread_yield(&ret);
 
         } else {
             printf("[ClientReader %i] wolfSSL_read failed\n", idx);
@@ -607,7 +607,7 @@ int enc_wolfSSL_process_query(int idx)
             break;
         }
 
-        ocall_thread_yield();
+        ocall_thread_yield(&ret);
     }
 }
 
