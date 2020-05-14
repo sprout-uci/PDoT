@@ -47,6 +47,7 @@ enclave {
         int ocall_bind(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len) propagate_errno; // dns_t
         int ocall_gethostname([in, size=__len]char *__name, size_t __len); // dns_t
         int ocall_getpeername(int __fd, [in, size=__len]struct sockaddr *__addr, socklen_t __len); // dns_t
+        int ocall_thread_yield(void);
         int ocall_select(int __nfds, [in, size=1024]fd_set *__readfds,
                          [in, size=1024]fd_set *__writefds,
                          [in, size=1024]fd_set *__exceptfds,

@@ -25,6 +25,7 @@
 #include "server-tls.h"
 #include "time.h"
 #include <common.h>
+#include <sched.h>
 
 /* Use Debug SGX ? */
 #if _DEBUG
@@ -204,3 +205,6 @@ int ocall_select(int __nfds, fd_set *__readfds,
                   __timeout);
 }
 
+int ocall_thread_yield(void) {
+    return sched_yield();
+}
