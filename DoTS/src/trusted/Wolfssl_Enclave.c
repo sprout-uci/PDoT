@@ -491,6 +491,7 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
     printf("[ClientReader %i] Free up some stuff\n", idx);
     wolfSSL_free(ssl);
     ssl = NULL;
+    queryLists[idx]->reader_writer_sig = 1;
 
     return ret;
 }
