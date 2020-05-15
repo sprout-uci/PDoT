@@ -34,6 +34,7 @@ struct QueryList {
     struct QueryBuffer *head;
     struct QueryBuffer *tail;
     int reader_writer_sig; // Used to let reader signal writer that client was disconnected.
+    int query_handler_exited;
     sgx_thread_mutex_t *queue_mutex;
     sgx_thread_mutex_t *cond_mutex;
     sgx_thread_cond_t *cond;
@@ -263,6 +264,7 @@ int enc_wolfSSL_Init(void)
         queryLists[i]->head = NULL;
         queryLists[i]->tail = NULL;
         queryLists[i]->reader_writer_sig = 1;
+        queryLists[i]->query_handler_exited = 0;
     }
     return wolfSSL_Init();
 }
@@ -482,8 +484,12 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
 
         } else {
             printf("[ClientReader %i] wolfSSL_read failed\n", idx);
-            queryLists[idx]->reader_writer_sig = 0;
-            sgx_thread_cond_signal(queryLists[idx]->cond);
+            while (queryLists[idx]->query_handler_exited != 1) {
+                sgx_thread_mutex_lock(queryLists[idx]->cond_mutex);
+                sgx_thread_cond_signal(queryLists[idx]->cond);
+                queryLists[idx]->reader_writer_sig = 0;
+                sgx_thread_mutex_unlock(queryLists[idx]->cond_mutex);
+            }
             break;
         }
     }
@@ -492,14 +498,15 @@ int enc_wolfSSL_read_from_client(WOLFSSL_CTX* ctx, int connd, int idx)
     wolfSSL_free(ssl);
     ssl = NULL;
     queryLists[idx]->reader_writer_sig = 1;
+    queryLists[idx]->query_handler_exited = 0;
 
     return ret;
 }
 
 int enc_wolfSSL_process_query(int idx)
 {
+    int ret = 0;
     while (1) {
-        int ret = 0;
         // Sleep until we receive a signal from ClientReader thread
         if (ret = sgx_thread_mutex_lock(queryLists[idx]->cond_mutex)) {
             eprintf("[QueryHandle  %i] Failed to lock %i.\n", idx, ret);
@@ -514,7 +521,7 @@ int enc_wolfSSL_process_query(int idx)
         }
 
         if (queryLists[idx]->reader_writer_sig == 0) {
-            // Unlock mutex
+            queryLists[idx]->query_handler_exited = 1;
             break;
         }
 
@@ -564,6 +571,7 @@ int enc_wolfSSL_process_query(int idx)
             printf("[QueryHandle  %i] connection to %i has ended.\n", idx, qB->idx);
             free(qB->query);
             free(qB);
+            queryLists[idx]->query_handler_exited = 1;
             break;
         }
 
@@ -591,10 +599,10 @@ int enc_wolfSSL_process_query(int idx)
         memcpy(answer + 2, ans->data, ans->end);
 
         /* Send answer back to client */
-        printf("[ClientWriter %i] send answer with qid: %u\n", idx, ans->header.qid);
+        printf("[QueryHandle  %i] send answer with qid: %u\n", idx, ans->header.qid);
         ret = wolfSSL_write(ssl, answer, ans->end + (size_t)2);
         if (ret != (ans->end + (size_t)2)) {
-            eprintf("[ClientWriter %i] ERROR: failed to write. Ret: %i, Shutdown: %i\n", idx, ret, wolfSSL_get_shutdown(ssl));
+            eprintf("[QueryHandle  %i] ERROR: failed to write. Ret: %i, Shutdown: %i\n", idx, ret, wolfSSL_get_shutdown(ssl));
         }
 
         free(qB->query);
@@ -602,10 +610,12 @@ int enc_wolfSSL_process_query(int idx)
         free(ans);
 
         if (queryLists[idx]->reader_writer_sig == 0) {
-            // Unlock mutex
+            queryLists[idx]->query_handler_exited = 1;
             break;
         }
     }
+    printf("[QueryHandle  %i] Finish QueryHandle\n", idx);
+    return ret;
 }
 
 void enc_wolfSSL_free(WOLFSSL* ssl)

@@ -162,6 +162,7 @@ void *QueryHandler(void* args) {
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
         // printf("Server failed to process query\n");
     }
+    printf("cleanup\n");
     close(pkg->connd);           /* Close the connection to the client   */
     pkg->open = 1;
     pthread_exit(NULL);
@@ -245,17 +246,13 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
         return -1;
     }
 
-    // if (fcntl(sockfd, F_SETFL, O_NONBLOCK) == -1) {
-    //     fprintf(stderr, "ERROR: failed to set socket options\n");
-    //     return -1;
-    // }
+    if (fcntl(sockfd, F_SETFL, O_NONBLOCK) == -1) {
+        fprintf(stderr, "ERROR: failed to set socket options\n");
+        return -1;
+    }
 
     int enable = 1;
-    struct timeval recv_timeout;
-    recv_timeout.tv_sec = 5;
-    recv_timeout.tv_usec = 0;
     ret = setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
-    ret = setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &recv_timeout, sizeof(struct timeval));
     assert(ret != -1);
 
     /* Create and initialize WOLFSSL_CTX */
@@ -315,7 +312,7 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
 
         // Check whether we can have new client
         for (clientIdx = 0; (clientIdx < MAX_CONCURRENT_THREADS) && !clientThread[clientIdx].open; clientIdx++);
-        if (clientIdx == MAX_CONCURRENT_THREADS) {
+        if (clientIdx >= MAX_CONCURRENT_THREADS) {
             continue;
         }
 
@@ -339,15 +336,13 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
         pthread_detach(clientThread[clientIdx].wtid);
     }
 
-    printf("clean up\n");
-
     /* Cleanup and return */
     sgxStatus = enc_wolfSSL_CTX_free(id, ctx);  /* Free the wolfSSL context object          */
     assert(sgxStatus == SGX_SUCCESS);
-    sgxStatus = enc_wolfSSL_Cleanup(id, &ret);      /* Cleanup the wolfSSL environment          */
-    assert(sgxStatus == SGX_SUCCESS && ret == WOLFSSL_SUCCESS);
     sgxStatus = enc_mutex_destroy(id, &ret); /* Initialize thread mutex within the enclave */
     assert(sgxStatus == SGX_SUCCESS && ret == 0);
+    sgxStatus = enc_wolfSSL_Cleanup(id, &ret);      /* Cleanup the wolfSSL environment          */
+    assert(sgxStatus == SGX_SUCCESS && ret == WOLFSSL_SUCCESS);
     close(sockfd);          /* Close the socket listening for clients   */
 
     printf("Shutdown complete\n");
