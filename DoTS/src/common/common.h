@@ -1,1 +1,2 @@
 #define MAX_CONCURRENT_THREADS 100
+#define DNS_CACHE 1

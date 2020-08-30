@@ -232,6 +232,14 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
         return EXIT_FAILURE;
     }
 
+#if DNS_CACHE
+    sgxStatus = enc_init_cache(id);
+    if (sgxStatus != SGX_SUCCESS) {
+        printf("init_cache failure\n");
+        return EXIT_FAILURE;
+    }
+#endif
+
 #ifdef SGX_DEBUG
     enc_wolfSSL_Debugging_ON(id);
 #else
@@ -352,5 +360,3 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
     printf("Shutdown complete\n");
     return 0;               /* Return reporting a success               */
 }
-
-            // pthread_exit(NULL);

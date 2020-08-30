@@ -29,6 +29,7 @@ enclave {
         public void enc_load_resconf([user_check]struct dns_resolv_conf *resconf);
         public void enc_load_hosts([user_check]struct dns_hosts *hosts);
         public void enc_load_hints([user_check]struct dns_hints *hints);
+        public void enc_init_cache(void);
         public void enc_create_key_and_x509([user_check]WOLFSSL_CTX* ctx);
     };
 

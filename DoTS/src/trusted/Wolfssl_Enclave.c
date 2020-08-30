@@ -15,6 +15,75 @@
 
 #define TLS_BUFFER_SIZE 514
 
+#if DNS_CACHE
+#include "tree.h"
+struct rrset {
+	char name[DNS_D_MAXNAME + 1];
+	enum dns_type type;
+
+	union {
+		struct dns_packet packet;
+		unsigned char pbuf[dns_p_calcsize(1024)];
+	};
+
+	RB_ENTRY(rrset) rbe;
+};
+
+static int rrset_init(struct rrset *set, const char *name, enum dns_type type) {
+	int error;
+
+	memset(set, 0, sizeof *set);
+
+	dns_strlcpy(set->name, name, sizeof set->name);
+	set->type = type;
+
+	dns_p_init(&set->packet, sizeof set->pbuf);
+
+	// if ((error = dns_p_push(&set->packet, DNS_S_QD, name, strlen(name), type, DNS_C_IN, 0, NULL)))
+	// 	return error;
+
+	return 0;
+} /* rrset_init() */
+
+RB_HEAD(rrcache, rrset);
+
+static inline int rrset_cmp(struct rrset *a, struct rrset *b) {
+	int cmp;
+	return ((cmp = a->type - b->type))? cmp : strcasecmp(a->name, b->name);
+} /* rrset_cmp() */
+
+RB_PROTOTYPE(rrcache, rrset, rbe, rrset_cmp);
+RB_GENERATE(rrcache, rrset, rbe, rrset_cmp);
+
+static struct cache {
+	struct dns_cache res;
+	struct rrcache root;
+} *cache; /* struct cache */
+
+void cache_close(void) {
+    struct rrset *set;
+    if (!cache)
+        return;
+    while ((set = RB_MIN(rrcache, &cache->root))) {
+        RB_REMOVE(rrcache, &cache->root, set);
+        free(set);
+    }
+    free(cache);
+}
+
+int cache_init(void) {
+    int error;
+    if (!(cache = (struct cache *)malloc(sizeof *cache))) {
+        cache_close();
+        return -1;
+    }
+    dns_cache_init(&cache->res);
+    cache->res.state = cache;
+    RB_INIT(&cache->root);
+    return 0;
+}
+#endif /* DNS_CACHE */
+
 struct Query {
     char qname[DNS_D_MAXNAME + 1];
     enum dns_type qtype;
@@ -40,7 +109,7 @@ struct QueryList {
     sgx_thread_cond_t *cond;
 };
 
-// Creat QueryList to store incoming requests and outgoing responses
+// Create QueryList to store incoming requests and outgoing responses
 struct QueryList *queryLists[MAX_CONCURRENT_THREADS];
 
 struct dns_resolv_conf *resconf;
@@ -49,6 +118,9 @@ struct dns_hosts *hosts;
 
 struct dns_hints *hints;
 
+#if DNS_CACHE
+static sgx_thread_mutex_t *cache_mutex;
+#endif
 
 void printf(const char *fmt, ...)
 {
@@ -329,6 +401,13 @@ int enc_mutex_init(void)
             return -1;
         }
     }
+#if DNS_CACHE
+    cache_mutex = (sgx_thread_mutex_t *) malloc(sizeof(sgx_thread_mutex_t));
+    if (sgx_thread_mutex_init(cache_mutex, NULL) != 0) {
+        eprintf("Failed to initialize mutex\n");
+        return -1;
+    }
+#endif
     return 0;
 }
 
@@ -348,6 +427,12 @@ int enc_mutex_destroy(void)
             // return -1;
         }
     }
+#if DNS_CACHE
+    if (sgx_thread_mutex_destroy(cache_mutex) != 0) {
+        eprintf("Failed to destroy cache_mutex\n");
+        // return -1;
+    }
+#endif
     return 0;
 }
 
@@ -577,7 +662,60 @@ int enc_wolfSSL_process_query(int idx)
 
         /* Resolve query */
         printf("[QueryHandle  %i] resolve query\n", idx);
+#if DNS_CACHE
+        // Find from cache
+        struct rrset key, *set;
+        int error;
+        dns_strlcpy(key.name, qB->query->qname, sizeof key.name);
+        key.type = qB->query->qtype;
+        // Search from cache
+        set = RB_FIND(rrcache, &cache->root, &key);
+        if (set == NULL) { // Record not found in cache
+            printf("[QueryHandle  %i] Resource not found in cache: %s\n", idx, qB->query->qname);
+            // Resolve in the normal way
+            ans = resolve_query(1, qB->query);
+            if (ans == NULL){
+                eprintf("[QueryHandle  %i] Failed to resolve query.\n", idx);
+                free(qB->query);
+                free(qB);
+                continue;
+            }
+            // Wait for cache mutex
+            if (ret = sgx_thread_mutex_lock(cache_mutex)) {
+                eprintf("[QueryHandle  %i] Failed to lock cache mutex %i.\n", idx, ret);
+            }
+            // Prepare to insert record to cache
+            set = (struct rrset *)malloc(sizeof *set);
+            if ((error = rrset_init(set, qB->query->qname, qB->query->qtype))) {
+                eprintf("[QueryHandle  %i] Failed to init rrset.\n", idx);
+                continue;
+            }
+            // TODO: Control the size of the tree.
+            dns_p_copy(&set->packet, ans);
+            printf("[QueryHandle  %i] %i, %i, %p\n", idx, ans->size, &set->packet.size, &set->packet);
+            // Double check whether the record already exists in cache
+            if (RB_FIND(rrcache, &cache->root, &key) == NULL) {
+                // Insert record to cache
+                assert(!RB_INSERT(rrcache, &cache->root, set));
+            }
+            // Unlock mutex
+            if (sgx_thread_mutex_unlock(cache_mutex) != 0) {
+                eprintf("[QueryHandle  %i] Failed to unlock mutex.\n", idx);
+                free(ans);
+                free(qB->query);
+                free(qB);
+                return -1;
+            }
+        } else { // Record found in cache
+            eprintf("[QueryHandle  %i] Resource found in cache: %s\n", idx, qB->query->qname); // required for now to prevent race condition
+            ans = dns_p_make(dns_p_calcsize(1024), &error);
+            dns_p_copy(ans, &set->packet);
+            ans->header.qid = qB->query->qid;
+            printf("[QueryHandle  %i] %p, %p\n", idx, ans, &set->packet);
+        }
+#else
         ans = resolve_query(1, qB->query);
+#endif
         if (ans == NULL){
             eprintf("[QueryHandle  %i] Failed to resolve query.\n", idx);
             free(qB->query);
@@ -649,6 +787,9 @@ int enc_wolfSSL_Cleanup(void)
     free(resconf);
     free(hosts);
     free(hints);
+#if DNS_CACHE
+    cache_close();
+#endif
     return wolfSSL_Cleanup();
 }
 
@@ -665,6 +806,14 @@ void enc_load_hosts(struct dns_hosts *o_hosts) {
 void enc_load_hints(struct dns_hints *o_hints) {
     hints = malloc(sizeof(struct dns_hints));
     memcpy(hints, o_hints, sizeof(struct dns_hints));
+}
+
+void enc_init_cache(void) {
+    int error = 0;
+#if DNS_CACHE
+    error = cache_init();
+#endif
+    assert(error == 0);
 }
 
 extern struct ra_tls_options my_ra_tls_options;
