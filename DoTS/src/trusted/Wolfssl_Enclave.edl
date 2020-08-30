@@ -22,8 +22,7 @@ enclave {
         public int enc_mutex_init(void);
         public int enc_mutex_destroy(void);
         public int enc_wolfSSL_read_from_client([user_check]WOLFSSL_CTX* ctx, int connd, int idx);
-        public int enc_wolfSSL_write_to_client(int idx);
-        public int enc_wolfSSL_process_query(int tid);
+        public int enc_wolfSSL_process_query(int idx);
         public void enc_wolfSSL_free([user_check]WOLFSSL* ssl);
         public void enc_wolfSSL_CTX_free([user_check]WOLFSSL_CTX* ctx);
         public int enc_wolfSSL_Cleanup(void);

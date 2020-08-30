@@ -57,7 +57,7 @@ case ${option} in
     END_PORT=$2
     num_clients=$(($END_PORT-$START_PORT+1))
     echo "Experiment for ${num_clients} clients:"
-    for j in $(seq 5 5 100)
+    for j in $(seq 1 1 10)
     do
       #echo "Running stubby..."
       cd $PDOT_STUBBY_DIR

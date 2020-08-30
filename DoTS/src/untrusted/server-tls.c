@@ -66,13 +66,6 @@ WOLFSSL_CTX* ctx;
 WOLFSSL_METHOD* method;
 
 /* Thread argument package */
-struct qtarg_pkg {
-    pthread_t tid;
-    int       sgx_id;
-    int       t_count;
-};
-
-/* Thread argument package */
 struct ctarg_pkg {
     pthread_t rtid;
     pthread_t wtid;
@@ -157,41 +150,21 @@ void* ClientReader(void* args)
 
     /* Cleanup after this connection */
     // printf("Clean up ClientHandler\n");
-    pkg->open = 1;
-    pthread_exit(NULL);
-}
-
-void* ClientWriter(void* args)
-{
-    struct ctarg_pkg* pkg = args;
-    int               sgxStatus;
-    int               ret;
-
-    sgxStatus = enc_wolfSSL_write_to_client(pkg->sgx_id, &ret, pkg->t_count);
-    if (sgxStatus != SGX_SUCCESS || ret == -1) {
-        printf("Server failed to write to client: %i, SGX_STATUS: %i\n", pkg->connd, sgxStatus);
-    }
-
-    /* Cleanup after this connection */
-    // printf("Clean up ClientHandler\n");
-    close(pkg->connd);           /* Close the connection to the client   */
-    pkg->open = 1;
     pthread_exit(NULL);
 }
 
 void *QueryHandler(void* args) {
-    struct qtarg_pkg* pkg = args;
+    struct ctarg_pkg* pkg = args;
     int               sgxStatus;
     int               ret;
-    int               counter = 0;
 
     sgxStatus = enc_wolfSSL_process_query(pkg->sgx_id, &ret, pkg->t_count);
     if (sgxStatus != SGX_SUCCESS || ret == -1) {
         // printf("Server failed to process query\n");
-    } else if (ret == 0) {
-        printf("QueryHandler %i finished\n", pkg->t_count);
-        pthread_exit(NULL);
     }
+    printf("cleanup\n");
+    close(pkg->connd);           /* Close the connection to the client   */
+    pkg->open = 1;
     pthread_exit(NULL);
 }
 
@@ -217,14 +190,7 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
         clientThread[i].open    = 0;
         clientThread[i].t_count = 0;
     }
-    struct qtarg_pkg queryThread[QUERY_HANDLE_THREADS];
-    for (int i=0; i < QUERY_HANDLE_THREADS; i++) {
-        queryThread[i].tid     = 0;
-        queryThread[i].sgx_id  = 0;
-        queryThread[i].t_count = 0;
-    }
     int clientIdx;
-    int queryIdx;
 
     /* Initialize wolfSSL */
     enc_wolfSSL_Init(id, &sgxStatus);
@@ -280,10 +246,10 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
         return -1;
     }
 
-    // if (fcntl(sockfd, F_SETFL, O_NONBLOCK) == -1) {
-    //     fprintf(stderr, "ERROR: failed to set socket options\n");
-    //     return -1;
-    // }
+    if (fcntl(sockfd, F_SETFL, O_NONBLOCK) == -1) {
+        fprintf(stderr, "ERROR: failed to set socket options\n");
+        return -1;
+    }
 
     int enable = 1;
     struct timeval recv_timeout;
@@ -342,15 +308,6 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
         clientThread[clientIdx].open = 1;
     }
 
-    for (int i = 0; i < QUERY_HANDLE_THREADS; i++) {
-        queryThread[i].sgx_id = id;
-        queryThread[i].t_count = i;
-
-        /* Launch a thread to resolve query from new client */
-        pthread_create(&queryThread[i].tid, NULL, QueryHandler, &queryThread[i]);
-        pthread_detach(queryThread[i].tid);
-    }
-
     // printf("Waiting for a connection...\n");
 
     while(!stop) {
@@ -359,7 +316,7 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
 
         // Check whether we can have new client
         for (clientIdx = 0; (clientIdx < MAX_CONCURRENT_THREADS) && !clientThread[clientIdx].open; clientIdx++);
-        if (clientIdx == MAX_CONCURRENT_THREADS) {
+        if (clientIdx >= MAX_CONCURRENT_THREADS) {
             continue;
         }
 
@@ -378,20 +335,18 @@ int server_connect(sgx_enclave_id_t id, enum eval_type et)
         pthread_detach(clientThread[clientIdx].rtid);
 
         /* Launch a writer thread to deal with the new client */
-        pthread_create(&clientThread[clientIdx].wtid, NULL, ClientWriter, &clientThread[clientIdx]);
+        pthread_create(&clientThread[clientIdx].wtid, NULL, QueryHandler, &clientThread[clientIdx]);
         /* State that we won't be joining this thread */
         pthread_detach(clientThread[clientIdx].wtid);
     }
 
-    printf("clean up\n");
-
     /* Cleanup and return */
     sgxStatus = enc_wolfSSL_CTX_free(id, ctx);  /* Free the wolfSSL context object          */
     assert(sgxStatus == SGX_SUCCESS);
-    sgxStatus = enc_wolfSSL_Cleanup(id, &ret);      /* Cleanup the wolfSSL environment          */
-    assert(sgxStatus == SGX_SUCCESS && ret == WOLFSSL_SUCCESS);
     sgxStatus = enc_mutex_destroy(id, &ret); /* Initialize thread mutex within the enclave */
     assert(sgxStatus == SGX_SUCCESS && ret == 0);
+    sgxStatus = enc_wolfSSL_Cleanup(id, &ret);      /* Cleanup the wolfSSL environment          */
+    assert(sgxStatus == SGX_SUCCESS && ret == WOLFSSL_SUCCESS);
     close(sockfd);          /* Close the socket listening for clients   */
 
     printf("Shutdown complete\n");
