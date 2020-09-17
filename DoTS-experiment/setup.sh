@@ -46,6 +46,7 @@ if [ ! -d "getdns" ]; then
     ../configure --without-libidn --without-libidn2 --enable-stub-only --with-stubby
     make -j$(nproc)
     cp stubby/stubby $EVAL_DIR/bin/unbound-stubby
+    cp stubby/stubby $EVAL_DIR/bin/cloudflare-stubby
 fi
 
 # Build PDoT app
