@@ -54,7 +54,9 @@ for j, s in enumerate(setting_names):
     #ax.set_title("Latency measurement for " + s + " start (DoTS v.s. Unbound)")
     ax.set_xticks([x for x in range(0, len(domain))])
     #ax.set_xlabel("Domain names")
-    ax.set_ylabel("Time to resolve a query [s]")
-    ax.set_ylim(0, 0.012)
+    if s == 'cold':
+        ax.set_ylim(0, 0.55)
+    if s == 'warm':
+        ax.set_ylim(0, 0.075)
     ax.set_xticklabels(domain, rotation='vertical')
     fig.savefig(fig_name, bbox_inches='tight')

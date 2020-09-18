@@ -32,32 +32,21 @@ if int(sys.argv[3]) == 0:
     fo.write('\n')
 
 # Actual experiment
-if setting == 'cold':
-    domain = domain_list[int(int(sys.argv[3])%10)]
-    r = dns.message.make_query(domain, dns.rdatatype.A)
-    start = time.time()
-    resp = dns.query.udp(r, '127.0.0.1')
-    if resp.answer:
-        total_time = time.time() - start
-        #print(total_time)
-        fo.write("," + str(total_time))
-    if int(sys.argv[3])%10 == 9:
-        fo.write("\n")
-elif setting == 'warm':
+if setting == 'warm':
     r = dns.message.make_query('bbc.com', dns.rdatatype.A)
     resp = dns.query.udp(r, '127.0.0.1')
-    for i, domain in enumerate(domain_list):
-        answers = []
-        #print("searching: " + domain)
-        r = dns.message.make_query(domain, dns.rdatatype.A)
-        while True:
-            start = time.time()
-            resp = dns.query.udp(r, '127.0.0.1')
-            if resp.answer:
-                total_time = time.time() - start
-                fo.write(str(total_time))
-                if i != 9:
-                    fo.write(',')
-                break
-    fo.write("\n")
+for i, domain in enumerate(domain_list):
+    answers = []
+    #print("searching: " + domain)
+    r = dns.message.make_query(domain, dns.rdatatype.A)
+    while True:
+        start = time.time()
+        resp = dns.query.udp(r, '127.0.0.1')
+        if resp.answer:
+            total_time = time.time() - start
+            fo.write(str(total_time))
+            if i != 9:
+                fo.write(',')
+            break
+fo.write("\n")
 fo.close()

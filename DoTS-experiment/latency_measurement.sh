@@ -18,23 +18,31 @@ fi
 
 # Copy Stubby config files to bin directory
 cd $BIN_DIR
-cp ../pdot-stubby-template.yml pdot-latency-stubby.yml
-sed -i "s/address_data:/address_data: 127.0.0.1/" pdot-latency-stubby.yml
-cp ../unbound-stubby-template.yml unbound-latency-stubby.yml
-sed -i "s/address_data:/address_data: 127.0.0.1/" unbound-latency-stubby.yml
+cp ../pdot-stubby-template.yml pdot-latency-cold-stubby.yml
+cp ../pdot-stubby-template.yml pdot-latency-warm-stubby.yml
+sed -i "s/address_data:/address_data: 127.0.0.1/" pdot-latency-cold-stubby.yml
+sed -i "s/address_data:/address_data: 127.0.0.1/" pdot-latency-warm-stubby.yml
+sed -i "s/idle_timeout:/idle_timeout: 0/" pdot-latency-cold-stubby.yml
+sed -i "s/idle_timeout:/idle_timeout: 10000/" pdot-latency-warm-stubby.yml
+cp ../unbound-stubby-template.yml unbound-latency-cold-stubby.yml
+cp ../unbound-stubby-template.yml unbound-latency-warm-stubby.yml
+sed -i "s/address_data:/address_data: 127.0.0.1/" unbound-latency-cold-stubby.yml
+sed -i "s/address_data:/address_data: 127.0.0.1/" unbound-latency-warm-stubby.yml
+sed -i "s/idle_timeout:/idle_timeout: 0/" unbound-latency-cold-stubby.yml
+sed -i "s/idle_timeout:/idle_timeout: 10000/" unbound-latency-warm-stubby.yml
 
 # Run DoTS measurement
 cd $BIN_DIR
 echo "Running PDoT..."
-./App -l > /dev/null 2>&1 &
-sleep 5
+# ./App -l > /dev/null 2>&1 &
+# sleep 5
 echo "Running stubby..."
 echo "Running DoTS measurement (cold start)..."
-for i in $(seq 0 999)
+for i in $(seq 0 99)
 do
   cd $BIN_DIR
-  sudo -b ./pdot-stubby -C pdot-latency-stubby.yml -g > /dev/null 2>&1 &
-  sleep 1
+  sudo -b ./pdot-stubby -C pdot-latency-cold-stubby.yml -g > /dev/null 2>&1 &
+  sleep 2
   cd $EVAL_DIR
   ./latency.py dots cold $i
   sudo pkill stubby
@@ -44,7 +52,7 @@ echo "Running DoTS measurement (warm start)..."
 for i in $(seq 0 99)
 do
   cd $BIN_DIR
-  sudo -b ./pdot-stubby -C pdot-latency-stubby.yml -g > /dev/null 2>&1 &
+  sudo -b ./pdot-stubby -C pdot-latency-warm-stubby.yml -g > /dev/null 2>&1 &
   sleep 2
   cd $EVAL_DIR
   ./latency.py dots warm $i
@@ -66,10 +74,10 @@ cd $BIN_DIR
 sleep 5
 echo "Running stubby..."
 echo "Running unbound measurement (cold start)..."
-for i in $(seq 0 999)
+for i in $(seq 0 99)
 do
   cd $BIN_DIR
-  sudo -b ./unbound-stubby -C unbound-latency-stubby.yml -g > /dev/null 2>&1 &
+  sudo -b ./unbound-stubby -C unbound-latency-cold-stubby.yml -g > /dev/null 2>&1 &
   sleep 1
   cd $EVAL_DIR
   ./latency.py unbound cold $i
@@ -80,7 +88,7 @@ echo "Running unbound measurement (warm start)..."
 for i in $(seq 0 99)
 do
   cd $BIN_DIR
-  sudo -b ./unbound-stubby -C unbound-latency-stubby.yml -g > /dev/null 2>&1 &
+  sudo -b ./unbound-stubby -C unbound-latency-warm-stubby.yml -g > /dev/null 2>&1 &
   sleep 2
   cd $EVAL_DIR
   ./latency.py unbound warm $i

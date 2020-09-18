@@ -20,8 +20,12 @@ fi
 
 # Copy Stubby config files to bin directory
 cd $BIN_DIR
-cp ../pdot-stubby-template.yml pdot-latency-stubby.yml
-sed -i "s/address_data:/address_data: 127.0.0.1/" pdot-latency-stubby.yml
+cp ../pdot-stubby-template.yml pdot-latency-cold-stubby.yml
+cp ../pdot-stubby-template.yml pdot-latency-warm-stubby.yml
+sed -i "s/address_data:/address_data: 127.0.0.1/" pdot-latency-cold-stubby.yml
+sed -i "s/address_data:/address_data: 127.0.0.1/" pdot-latency-warm-stubby.yml
+sed -i "s/idle_timeout:/idle_timeout: 0/" pdot-latency-cold-stubby.yml
+sed -i "s/idle_timeout:/idle_timeout: 10000/" pdot-latency-warm-stubby.yml
 
 # Run PDoT
 cd $BIN_DIR
@@ -31,7 +35,7 @@ sleep 20
 
 # Run stubby for pre-population
 cd $BIN_DIR
-sudo -b ./pdot-stubby -C pdot-latency-stubby.yml -g > /dev/null 2>&1 &
+sudo -b ./pdot-stubby -C pdot-latency-warm-stubby.yml -g > /dev/null 2>&1 &
 sleep 1
 
 # Run dig command to pre-populate cache
@@ -62,10 +66,10 @@ sleep 1
 
 # Run cold start measurement with cache
 echo "Running DoTS measurement (cold start) with cache..."
-for i in $(seq 0 999)
+for i in $(seq 0 99)
 do
   cd $BIN_DIR
-  sudo -b ./pdot-stubby -C pdot-latency-stubby.yml -g > /dev/null 2>&1 &
+  sudo -b ./pdot-stubby -C pdot-latency-cold-stubby.yml -g > /dev/null 2>&1 &
   sleep 1
   cd $EVAL_DIR
   ./latency.py dots cold $i
@@ -81,7 +85,7 @@ echo "Running DoTS measurement (warm start) with cache..."
 for i in $(seq 0 99)
 do
   cd $BIN_DIR
-  sudo -b ./pdot-stubby -C pdot-latency-stubby.yml -g > /dev/null 2>&1 &
+  sudo -b ./pdot-stubby -C pdot-latency-warm-stubby.yml -g > /dev/null 2>&1 &
   sleep 2
   cd $EVAL_DIR
   ./latency.py dots warm $i
